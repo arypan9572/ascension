@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>Ascension — Become Your Highest Self</title>
+<meta name="description" content="Ascension is an RPG for your real life — quests, an evolving stat graph, addiction recovery, and a verified honesty system.">
+
+<!-- PWA / installability -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#050506">
+<meta name="background-color" content="#050506">
+
+<!-- iOS home screen / standalone support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ascension">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#050506;
+    --void-2:#0A0A0D;
+    --surface:rgba(255,255,255,0.055);
+    --surface-strong:rgba(255,255,255,0.10);
+    --border:rgba(255,255,255,0.09);
+    --border-strong:rgba(255,255,255,0.16);
+    --text:#F5F5F7;
+    --text-dim:rgba(245,245,247,0.56);
+    --text-faint:rgba(245,245,247,0.32);
+    --violet:#A78BFA;
+    --violet-deep:#7C3AED;
+    --violet-glow:rgba(167,139,250,0.35);
+    --discipline:#9F7AEA;
+    --bodystat:#FB7185;
+    --mind:#22D3EE;
+    --social:#FBBF24;
+    --wealth:#34D399;
+    --wisdom:#818CF8;
+    --focus:#A3E635;
+    --gold:#E8C87A;
+    --danger:#F87167;
+    --ok:#34D399;
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    background:#000;
+    font-family:var(--font-body);
+    color:var(--text);
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  body{ min-height:100vh; padding:24px 0; }
+  ::-webkit-scrollbar{ display:none; }
+  *{ scrollbar-width:none; }
+
+  button{ font-family:inherit; border:none; background:none; color:inherit; cursor:pointer; }
+  button:active{ transform:scale(0.96); }
+
+  .device{
+    width:390px;
+    height:844px;
+    background:var(--void);
+    border-radius:38px;
+    border:8px solid #17181c;
+    box-shadow:0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(167,139,250,0.06) inset;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .device::after{
+    content:''; position:absolute; inset:0; pointer-events:none; z-index:45; opacity:.5; mix-blend-mode:overlay;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 3px);
+  }
+  .device::before{
+    content:'';
+    position:absolute; top:14px; left:50%; transform:translateX(-50%);
+    width:110px; height:28px; background:#000; border-radius:20px; z-index:50;
+  }
+  .status-row{
+    height:52px; flex:0 0 auto; display:flex; align-items:flex-end; justify-content:space-between;
+    padding:0 30px 8px 34px; font-family:var(--font-mono); font-size:13px; font-weight:500; color:var(--text);
+  }
+
+  .screen{
+    flex:1 1 auto;
+    overflow-y:auto;
+    padding:6px 20px 110px 20px;
+    position:relative;
+  }
+  .screen.hidden{ display:none; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .wordmark{
+    font-family:var(--font-display); font-weight:600; font-size:19px; letter-spacing:0.5px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .wordmark .mark{
+    width:20px;height:20px;
+    background:linear-gradient(145deg,var(--violet),var(--violet-deep));
+    clip-path:polygon(30% 0%, 100% 0%, 70% 100%, 0% 100%);
+    box-shadow:0 0 12px var(--violet-glow);
+  }
+  .wordmark{ letter-spacing:1.5px; }
+  .pill-row{ display:flex; gap:8px; }
+  .pill{
+    display:flex; align-items:center; gap:5px;
+    background:var(--surface); border:1px solid var(--border);
+    padding:6px 12px; clip-path:polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    font-family:var(--font-mono); font-size:12px; font-weight:600; letter-spacing:0.3px;
+    backdrop-filter:blur(20px);
+  }
+
+  .glass{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:9px;
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+  }
+
+  /* Hexagon */
+  .hex-card{ padding:18px 4px 8px 4px; text-align:center; margin-bottom:16px; }
+  .hex-card .rank-label{ font-family:var(--font-mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--violet); margin-bottom:2px; }
+  .hex-card .level-label{ font-family:var(--font-display); font-size:22px; font-weight:600; margin-bottom:10px; }
+  .stat-tag{
+    position:absolute; font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+    display:flex; flex-direction:column; align-items:center; gap:2px; width:64px;
+    transform:translate(-50%,-50%);
+  }
+  .stat-tag .dot{ width:7px; height:7px; border-radius:50%; margin-bottom:2px; }
+  .stat-tag .val{ color:var(--text-dim); font-size:10px; }
+
+  .xp-block{ margin:14px 6px 4px 6px; }
+  .xp-row{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-bottom:6px; }
+  .xp-bar-track{ height:8px; border-radius:100px; background:rgba(255,255,255,0.08); overflow:hidden; }
+  .xp-bar-fill{ height:100%; border-radius:100px; background:linear-gradient(90deg,var(--violet-deep),var(--violet)); transition:width .7s cubic-bezier(.22,1,.36,1); box-shadow:0 0 10px var(--violet-glow); }
+
+  .section-title{
+    font-family:var(--font-display); font-size:12.5px; font-weight:700; margin:22px 2px 10px 2px;
+    display:flex; align-items:center; justify-content:space-between;
+    text-transform:uppercase; letter-spacing:1.4px;
+    border-left:3px solid var(--violet); padding-left:9px;
+  }
+  .section-title .see-all{ font-family:var(--font-body); font-size:12px; font-weight:500; color:var(--violet); text-transform:none; letter-spacing:0; }
+
+  .quest-card{
+    display:flex; align-items:center; gap:12px; padding:13px 14px; margin-bottom:9px;
+  }
+  .quest-check{
+    width:24px; height:24px; border-radius:8px; border:1.5px solid var(--border-strong);
+    flex:0 0 auto; display:flex; align-items:center; justify-content:center; transition:all .25s;
+  }
+  .quest-check.done{ background:linear-gradient(145deg,var(--violet),var(--violet-deep)); border-color:transparent; box-shadow:0 0 10px var(--violet-glow); }
+  .quest-check svg{ width:13px; height:13px; opacity:0; transition:opacity .15s; }
+  .quest-check.done svg{ opacity:1; }
+  .quest-info{ flex:1 1 auto; }
+  .quest-name{ font-size:13.5px; font-weight:500; }
+  .quest-name.done{ color:var(--text-faint); text-decoration:line-through; }
+  .quest-meta{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:2px; }
+  .quest-reward{ font-family:var(--font-mono); font-size:11px; color:var(--gold); flex:0 0 auto; }
+
+  .mentor-card{ padding:16px; margin-top:18px; display:flex; gap:12px; align-items:flex-start; }
+  .mentor-avatar{
+    width:34px; height:34px; border-radius:11px; flex:0 0 auto;
+    background:linear-gradient(145deg,var(--violet),var(--violet-deep));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 14px var(--violet-glow);
+  }
+  .mentor-text{ font-size:12.5px; line-height:1.5; color:var(--text-dim); }
+  .mentor-text b{ color:var(--text); font-weight:600; }
+  .mentor-label{ font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--violet); margin-bottom:5px; }
+
+  .toast{
+    position:absolute; left:50%; top:90px; transform:translateX(-50%) translateY(-14px);
+    background:rgba(20,20,24,0.9); border:1px solid var(--border-strong);
+    padding:9px 16px; border-radius:100px; font-family:var(--font-mono); font-size:12px; font-weight:600;
+    color:var(--gold); backdrop-filter:blur(20px); opacity:0; transition:all .35s cubic-bezier(.22,1,.36,1);
+    pointer-events:none; z-index:80; white-space:nowrap;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* Nav */
+  .navbar{
+    position:absolute; left:14px; right:14px; bottom:16px; height:66px;
+    display:flex; align-items:center; justify-content:space-around;
+    border-radius:26px; z-index:40; padding:0 4px;
+  }
+  .nav-btn{ display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 10px; border-radius:16px; transition:all .2s; flex:1; }
+  .nav-btn svg{ width:21px; height:21px; stroke:var(--text-faint); transition:stroke .2s; }
+  .nav-btn span{ font-size:9.5px; font-weight:600; color:var(--text-faint); font-family:var(--font-mono); letter-spacing:0.3px; }
+  .nav-btn.active svg{ stroke:var(--violet); filter:drop-shadow(0 0 6px var(--violet-glow)); }
+  .nav-btn.active span{ color:var(--violet); }
+
+  /* Reusable */
+  .card{ padding:16px; margin-bottom:12px; }
+  .row-between{ display:flex; align-items:center; justify-content:space-between; }
+  .muted{ color:var(--text-dim); }
+  .small{ font-size:12px; }
+  .h1{ font-family:var(--font-display); font-weight:600; font-size:22px; margin-bottom:4px; }
+  .sub{ font-size:12.5px; color:var(--text-dim); margin-bottom:18px; }
+
+  /* Reset screen */
+  .reset-hero{ text-align:center; padding:28px 16px; margin-bottom:20px; position:relative; overflow:hidden; }
+  .reset-ring{ width:120px; height:120px; margin:0 auto 14px auto; position:relative; }
+  .begin-btn{
+    margin-top:16px; width:100%; padding:15px;
+    clip-path:polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    background:linear-gradient(145deg,var(--violet),var(--violet-deep));
+    font-family:var(--font-display); font-weight:700; font-size:13.5px; letter-spacing:1.5px; text-transform:uppercase;
+    box-shadow:0 8px 24px var(--violet-glow);
+  }
+  .step-item{ display:flex; align-items:center; gap:12px; padding:12px 14px; margin-bottom:8px; }
+  .step-num{
+    width:26px; height:26px; border-radius:9px; border:1.5px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--text-dim); flex:0 0 auto;
+  }
+  .step-num.done{ background:var(--wealth); border-color:transparent; color:#04140c; }
+  .step-name{ font-size:13px; font-weight:500; flex:1; }
+  .step-name.done{ color:var(--text-faint); text-decoration:line-through; }
+
+  /* Recovery */
+  .addiction-card{ padding:16px; margin-bottom:12px; }
+  .addiction-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .addiction-name{ font-family:var(--font-display); font-weight:600; font-size:14.5px; }
+  .timer{ font-family:var(--font-mono); font-size:26px; font-weight:600; letter-spacing:0.5px; margin:6px 0 2px 0; }
+  .timer-sub{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-bottom:12px; }
+  .stat-mini-row{ display:flex; gap:8px; }
+  .stat-mini{ flex:1; background:rgba(255,255,255,0.04); border-radius:12px; padding:9px 10px; }
+  .stat-mini .v{ font-family:var(--font-mono); font-size:13px; font-weight:600; }
+  .stat-mini .l{ font-size:9.5px; color:var(--text-faint); margin-top:2px; }
+  .urge-btn{
+    margin-top:12px; width:100%; padding:11px;
+    clip-path:polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    border:1px solid rgba(248,113,103,0.35); background:rgba(248,113,103,0.08); color:var(--danger);
+    font-weight:700; font-size:11.5px; letter-spacing:0.8px; text-transform:uppercase; font-family:var(--font-mono);
+  }
+
+  /* Commons */
+  .post-card{ padding:15px; margin-bottom:12px; }
+  .post-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .post-avatar{ width:32px; height:32px; border-radius:10px; flex:0 0 auto; }
+  .post-name{ font-size:12.5px; font-weight:600; }
+  .post-time{ font-size:10.5px; color:var(--text-faint); }
+  .post-body{ font-size:13px; line-height:1.5; color:var(--text); margin-bottom:10px; }
+  .post-badge{
+    display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10.5px;
+    background:var(--surface-strong); border:1px solid var(--border); padding:5px 9px; border-radius:100px; margin-bottom:10px;
+  }
+  .reactions{ display:flex; gap:14px; }
+  .react-btn{ display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text-dim); font-family:var(--font-mono); }
+  .react-btn.active{ color:var(--gold); }
+
+  .guild-strip{ display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; margin-bottom:6px; }
+  .guild-chip{ flex:0 0 auto; padding:9px 14px; border-radius:14px; font-size:12px; font-weight:500; white-space:nowrap; }
+
+  /* Profile */
+  .profile-head{ text-align:center; padding:22px 10px 10px 10px; }
+  .avatar-big{
+    width:76px; height:76px; border-radius:24px; margin:0 auto 12px auto;
+    background:linear-gradient(150deg,var(--violet),var(--violet-deep));
+    box-shadow:0 0 24px var(--violet-glow);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:26px; font-weight:700;
+  }
+  .bar-chart{ display:flex; align-items:flex-end; gap:7px; height:90px; padding:0 4px; }
+  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .bar-fill{ width:100%; border-radius:6px 6px 3px 3px; background:linear-gradient(180deg,var(--violet),var(--violet-deep)); }
+  .bar-label{ font-family:var(--font-mono); font-size:9px; color:var(--text-faint); }
+  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:6px; }
+  .cosmetic{ aspect-ratio:1; border-radius:16px; display:flex; align-items:center; justify-content:center; position:relative; }
+  .cosmetic .lock{ position:absolute; top:6px; right:6px; opacity:.4; }
+  .premium-card{ padding:18px; margin-top:16px; background:linear-gradient(155deg, rgba(167,139,250,0.14), rgba(124,58,237,0.06)); border:1px solid rgba(167,139,250,0.25); }
+
+  /* Hexagon glow + interactivity */
+  .hex-card{ position:relative; }
+  .hex-card::before{
+    content:''; position:absolute; top:40px; left:50%; transform:translateX(-50%);
+    width:260px; height:260px; background:radial-gradient(circle, var(--violet-glow), transparent 70%);
+    opacity:.3; filter:blur(30px); animation:pulseGlow 4.5s ease-in-out infinite; pointer-events:none;
+  }
+  @keyframes pulseGlow{ 0%,100%{ opacity:.22; transform:translateX(-50%) scale(1);} 50%{ opacity:.42; transform:translateX(-50%) scale(1.07);} }
+  .stat-tag{ cursor:pointer; pointer-events:auto; transition:transform .15s; }
+  .stat-tag:active{ transform:translate(-50%,-50%) scale(0.92); }
+
+  /* Overlay system */
+  .overlay{
+    position:absolute; inset:0; z-index:60; background:var(--void);
+    display:flex; flex-direction:column; transform:translateX(100%); transition:transform .38s cubic-bezier(.22,1,.36,1);
+  }
+  .overlay.open{ transform:translateX(0); }
+  .overlay-header{ flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:14px 20px 10px 16px; margin-top:44px; }
+  .back-btn{ width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:var(--surface); border:1px solid var(--border); font-size:17px; }
+  .overlay-title{ font-family:var(--font-display); font-weight:700; font-size:16px; text-transform:uppercase; letter-spacing:1.5px; }
+  .overlay-body{ flex:1 1 auto; overflow-y:auto; padding:4px 20px 100px 20px; }
+
+  /* Menu rows */
+  .menu-row{ display:flex; align-items:center; gap:12px; padding:14px 15px; margin-bottom:8px; }
+  .menu-icon{ width:34px; height:34px; border-radius:11px; background:var(--surface-strong); display:flex; align-items:center; justify-content:center; flex:0 0 auto; font-size:14px; }
+  .menu-label{ flex:1; font-size:13px; font-weight:500; }
+  .menu-chevron{ color:var(--text-faint); font-size:15px; }
+
+  /* Segment control */
+  .segment{ display:flex; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:3px; margin-bottom:16px; }
+  .segment button{ flex:1; padding:9px 6px; border-radius:11px; font-size:11.5px; font-weight:600; font-family:var(--font-mono); color:var(--text-faint); }
+  .segment button.active{ background:var(--surface-strong); color:var(--text); }
+
+  /* Statistics rows */
+  .stat-row-item{ padding:14px 15px; margin-bottom:9px; }
+  .stat-row-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; }
+  .stat-row-name{ font-size:12.5px; font-weight:600; }
+  .stat-row-val{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); }
+  .sparkline{ display:flex; align-items:flex-end; gap:3px; height:28px; }
+  .spark-bar{ flex:1; border-radius:2px 2px 0 0; background:var(--violet); opacity:.8; }
+
+  /* Ranks ladder */
+  .rank-item{ display:flex; align-items:center; gap:14px; padding:14px 15px; margin-bottom:8px; opacity:.4; }
+  .rank-item.reached{ opacity:1; }
+  .rank-item.current{ box-shadow:0 0 0 1.5px var(--violet) inset; }
+  .rank-badge{ width:38px; height:38px; border-radius:13px; background:linear-gradient(145deg,var(--violet),var(--violet-deep)); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:700; font-size:14px; flex:0 0 auto; }
+  .rank-item:not(.reached) .rank-badge{ background:rgba(255,255,255,0.07); }
+  .rank-name{ font-family:var(--font-display); font-weight:600; font-size:13.5px; }
+  .rank-xp{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:2px; }
+
+  /* Achievements */
+  .ach-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ach-card{ padding:14px; text-align:center; }
+  .ach-icon{ width:42px; height:42px; border-radius:14px; margin:0 auto 8px auto; display:flex; align-items:center; justify-content:center; font-size:18px; background:linear-gradient(145deg,var(--violet),var(--violet-deep)); }
+  .ach-card.locked .ach-icon{ background:rgba(255,255,255,0.06); filter:grayscale(1); opacity:.5; }
+  .ach-name{ font-size:11.5px; font-weight:600; margin-bottom:2px; }
+  .ach-desc{ font-size:9.5px; color:var(--text-faint); line-height:1.3; }
+
+  /* Customize */
+  .cust-tabs{ display:flex; gap:8px; overflow-x:auto; margin-bottom:14px; padding-bottom:3px; }
+  .cust-tab{ flex:0 0 auto; padding:8px 14px; border-radius:100px; font-size:11.5px; font-weight:600; }
+  .cust-tab.active{ background:var(--violet); color:#0a0612; }
+  .cust-tab:not(.active){ background:var(--surface); border:1px solid var(--border); color:var(--text-dim); }
+  .cust-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .cust-item{ aspect-ratio:0.85; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; position:relative; padding:8px; text-align:center; }
+  .cust-item.selected{ box-shadow:0 0 0 2px var(--violet) inset; }
+  .cust-swatch{ width:36px; height:36px; border-radius:12px; }
+  .cust-item .cn{ font-size:9px; color:var(--text-dim); font-weight:600; }
+  .cust-item .lock{ position:absolute; top:6px; right:6px; font-size:10px; opacity:.5; }
+  .equip-check{ position:absolute; top:6px; left:6px; color:var(--violet); font-size:12px; font-weight:700; }
+
+  /* Health + settings toggles */
+  .health-row{ display:flex; align-items:center; gap:12px; padding:14px 15px; margin-bottom:9px; }
+  .health-icon{ width:32px; height:32px; border-radius:10px; background:var(--surface-strong); display:flex; align-items:center; justify-content:center; flex:0 0 auto; font-size:14px; }
+  .health-info{ flex:1; }
+  .health-name{ font-size:12.5px; font-weight:600; }
+  .health-val{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:1px; }
+  .toggle{ width:42px; height:25px; border-radius:100px; background:rgba(255,255,255,0.1); position:relative; flex:0 0 auto; transition:background .2s; }
+  .toggle.on{ background:var(--violet); }
+  .toggle .knob{ width:19px; height:19px; border-radius:50%; background:#fff; position:absolute; top:3px; left:3px; transition:left .2s; }
+  .toggle.on .knob{ left:20px; }
+
+  /* Widgets gallery */
+  .widget-mock{ background:#111114; border:1px solid var(--border); border-radius:22px; padding:14px; margin-bottom:14px; }
+  .widget-small{ width:76px; height:76px; }
+  .widget-medium{ width:100%; height:82px; }
+  .widget-large{ width:100%; height:140px; }
+  .widget-label{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px; }
+
+  /* Breathing modal */
+  .breathe-overlay{ position:absolute; inset:0; z-index:90; background:rgba(5,5,6,0.95); backdrop-filter:blur(10px); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; }
+  .breathe-overlay.open{ opacity:1; pointer-events:auto; }
+  .breathe-circle{ width:140px; height:140px; border-radius:50%; background:radial-gradient(circle, var(--violet-glow), transparent 70%); border:1.5px solid var(--violet); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:13px; color:var(--violet); transition:transform 4s ease-in-out; }
+  .breathe-circle.expand{ transform:scale(1.5); }
+
+  /* Stat modal (hexagon tap) */
+  .stat-modal-wrap{ position:absolute; inset:0; z-index:85; display:flex; align-items:flex-end; opacity:0; pointer-events:none; transition:opacity .25s; }
+  .stat-modal-wrap.open{ opacity:1; pointer-events:auto; }
+  .stat-modal-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,0.55); }
+  .stat-modal{ position:relative; width:100%; padding:22px 22px 34px 22px; border-radius:28px 28px 0 0; transform:translateY(20px); transition:transform .3s cubic-bezier(.22,1,.36,1); }
+  .stat-modal-wrap.open .stat-modal{ transform:translateY(0); }
+  .stat-modal .grabber{ width:36px; height:4px; border-radius:100px; background:var(--border-strong); margin:0 auto 16px auto; }
+
+  .guild-chip.active{ background:var(--violet); color:#0a0612; border-color:transparent; }
+
+  /* ============ DAWG-style rank shield ============ */
+  .rank-shield-row{ display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:2px; }
+  .rank-shield{
+    width:22px; height:24px;
+    clip-path:polygon(50% 0%, 100% 22%, 100% 70%, 50% 100%, 0% 70%, 0% 22%);
+    background:linear-gradient(155deg,var(--violet),var(--violet-deep));
+    box-shadow:0 0 10px var(--violet-glow);
+    flex:0 0 auto;
+    animation:shieldPulse 3s ease-in-out infinite;
+  }
+  @keyframes shieldPulse{ 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.35);} }
+  .rank-label{ font-family:var(--font-mono); font-size:11px; letter-spacing:3px !important; text-transform:uppercase; color:var(--violet); }
+
+  /* ============ Verification system ============ */
+  .quest-card{ position:relative; transition:box-shadow .3s, border-color .3s; }
+  .quest-card.flagged{ box-shadow:0 0 0 1px rgba(248,113,103,0.5) inset; }
+  .quest-card.verifying{ box-shadow:0 0 0 1px rgba(167,139,250,0.5) inset; }
+  .verify-spinner{
+    width:24px; height:24px; border-radius:8px; border:2px solid rgba(167,139,250,0.25);
+    border-top-color:var(--violet); animation:spin .7s linear infinite; flex:0 0 auto;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .verify-badge{ display:inline-flex; align-items:center; gap:4px; font-family:var(--font-mono); font-size:9.5px; margin-top:2px; }
+  .verify-badge.pass{ color:var(--ok); }
+  .verify-badge.fail{ color:var(--danger); }
+  .verify-badge.self{ color:var(--text-faint); }
+  .recheck-btn{ font-family:var(--font-mono); font-size:9.5px; color:var(--violet); text-decoration:underline; margin-left:6px; }
+
+  .honesty-ring-wrap{ position:relative; width:64px; height:64px; flex:0 0 auto; }
+  .source-row{ display:flex; align-items:center; gap:12px; padding:14px 15px; margin-bottom:9px; }
+  .source-dot{ width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 6px var(--ok); flex:0 0 auto; }
+  .source-dot.off{ background:var(--text-faint); box-shadow:none; }
+  .app-usage-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .app-usage-bar-track{ flex:1; height:6px; border-radius:100px; background:rgba(255,255,255,0.08); overflow:hidden; }
+  .app-usage-bar-fill{ height:100%; border-radius:100px; }
+  .event-row{ display:flex; gap:10px; padding:11px 4px; border-bottom:1px solid var(--border); }
+  .event-row:last-child{ border-bottom:none; }
+  .event-dot{ width:7px; height:7px; border-radius:50%; margin-top:5px; flex:0 0 auto; }
+  .event-dot.pass{ background:var(--ok); }
+  .event-dot.fail{ background:var(--danger); }
+  .event-dot.neutral{ background:var(--text-faint); }
+  .event-text{ font-size:11.5px; line-height:1.4; }
+  .event-time{ font-family:var(--font-mono); font-size:9.5px; color:var(--text-faint); margin-top:2px; }
+
+  .relapse-banner{
+    display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border-radius:16px; margin-bottom:12px;
+    background:rgba(248,113,103,0.09); border:1px solid rgba(248,113,103,0.3);
+  }
+  .relapse-banner .rt{ font-size:12px; font-weight:600; color:var(--danger); margin-bottom:3px; }
+  .relapse-banner .rd{ font-size:11px; color:var(--text-dim); line-height:1.4; }
+  .relapse-actions{ display:flex; gap:8px; margin-top:8px; }
+  .relapse-actions button{ font-family:var(--font-mono); font-size:10px; padding:6px 10px; border-radius:8px; font-weight:600; }
+  .relapse-actions .dismiss{ background:rgba(255,255,255,0.08); }
+  .relapse-actions .log{ background:rgba(248,113,103,0.18); color:var(--danger); }
+
+  /* ============ Text / number animations ============ */
+  .typewrite-cursor{ display:inline-block; width:2px; height:12px; background:var(--violet); margin-left:2px; vertical-align:middle; animation:blink 0.85s step-end infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .count-num{ display:inline-block; }
+
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+  .stagger > *{ animation:cardIn .45s cubic-bezier(.22,1,.36,1) backwards; }
+  .stagger > *:nth-child(1){ animation-delay:.02s; }
+  .stagger > *:nth-child(2){ animation-delay:.06s; }
+  .stagger > *:nth-child(3){ animation-delay:.10s; }
+  .stagger > *:nth-child(4){ animation-delay:.14s; }
+  .stagger > *:nth-child(5){ animation-delay:.18s; }
+  .stagger > *:nth-child(6){ animation-delay:.22s; }
+  .stagger > *:nth-child(7){ animation-delay:.26s; }
+  .stagger > *:nth-child(8){ animation-delay:.30s; }
+  .stagger > *:nth-child(9){ animation-delay:.34s; }
+
+  /* Quest complete burst */
+  .burst{ position:absolute; inset:0; pointer-events:none; }
+  .burst span{
+    position:absolute; top:50%; left:50%; width:5px; height:5px; border-radius:50%;
+    background:var(--violet); opacity:0; transform:translate(-50%,-50%);
+    animation:burstPop .6s ease-out forwards;
+  }
+  @keyframes burstPop{
+    0%{ opacity:1; transform:translate(-50%,-50%) scale(0.4) translate(0,0); }
+    100%{ opacity:0; transform:translate(-50%,-50%) scale(1) translate(var(--bx), var(--by)); }
+  }
+
+  /* Level up celebration */
+  .levelup-overlay{
+    position:absolute; inset:0; z-index:95; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 50% 45%, rgba(124,58,237,0.35), rgba(5,5,6,0.97) 70%);
+    opacity:0; pointer-events:none; transition:opacity .35s;
+  }
+  .levelup-overlay.open{ opacity:1; pointer-events:auto; }
+  .levelup-ring{
+    width:150px; height:150px; border-radius:50%; border:2px solid var(--violet);
+    display:flex; align-items:center; justify-content:center; position:relative; margin-bottom:22px;
+    animation:ringExpand 1s cubic-bezier(.22,1,.36,1);
+  }
+  @keyframes ringExpand{ from{ transform:scale(0.3); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .levelup-ring::before, .levelup-ring::after{
+    content:''; position:absolute; inset:-14px; border-radius:50%; border:1px solid rgba(167,139,250,0.4);
+    animation:ringPulseOut 1.8s ease-out infinite;
+  }
+  .levelup-ring::after{ animation-delay:.6s; }
+  @keyframes ringPulseOut{ 0%{ transform:scale(0.85); opacity:.8; } 100%{ transform:scale(1.5); opacity:0; } }
+  .levelup-num{ font-family:var(--font-display); font-weight:700; font-size:44px; }
+  .levelup-title{ font-family:var(--font-mono); letter-spacing:5px; font-size:12px; color:var(--violet); text-transform:uppercase; margin-bottom:4px; opacity:0; animation:fadeUp .5s ease .3s forwards; }
+  .levelup-sub{ font-size:12.5px; color:var(--text-dim); opacity:0; animation:fadeUp .5s ease .5s forwards; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+  .levelup-particles span{
+    position:absolute; width:4px; height:4px; border-radius:50%; background:var(--gold); top:50%; left:50%;
+    animation:partFly 1.4s ease-out forwards;
+  }
+  @keyframes partFly{ 0%{ opacity:1; transform:translate(-50%,-50%) scale(1) translate(0,0);} 100%{ opacity:0; transform:translate(-50%,-50%) scale(0.3) translate(var(--px), var(--py));} }
+
+  /* ============ Real-device / standalone PWA layout ============ */
+  @media (max-width:500px), (display-mode:standalone){
+    body{ padding:0; align-items:stretch; background:var(--void); }
+    .device{ width:100vw; height:100vh; height:100dvh; border-radius:0; border:none; box-shadow:none; }
+    .device::before{ display:none; }
+    .status-row{ display:none; }
+    .screen{ padding-top:max(14px, env(safe-area-inset-top)); }
+    .navbar{ bottom:max(14px, env(safe-area-inset-bottom)); left:max(14px, env(safe-area-inset-left)); right:max(14px, env(safe-area-inset-right)); }
+  }
+
+  /* ============ Add to Home Screen banner ============ */
+  .a2hs-banner{
+    position:absolute; left:12px; right:12px; bottom:max(90px, calc(env(safe-area-inset-bottom) + 90px));
+    z-index:98; padding:16px; border-radius:16px;
+    background:rgba(14,14,17,0.97); border:1px solid var(--border-strong); backdrop-filter:blur(20px);
+    box-shadow:0 20px 50px rgba(0,0,0,0.6);
+    transform:translateY(140%); transition:transform .4s cubic-bezier(.22,1,.36,1);
+  }
+  .a2hs-banner.show{ transform:translateY(0); }
+  .a2hs-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .a2hs-icon{ width:36px; height:36px; border-radius:10px; background:linear-gradient(145deg,var(--violet),var(--violet-deep)); flex:0 0 auto; box-shadow:0 0 12px var(--violet-glow); }
+  .a2hs-title{ font-family:var(--font-display); font-weight:700; font-size:13.5px; }
+  .a2hs-sub{ font-size:11px; color:var(--text-dim); margin-top:1px; }
+  .a2hs-close{ margin-left:auto; color:var(--text-faint); font-size:18px; padding:4px; }
+  .a2hs-step{ display:flex; align-items:center; gap:10px; padding:7px 0; font-size:12px; color:var(--text-dim); }
+  .a2hs-step b{ color:var(--text); }
+  .a2hs-num{ width:20px; height:20px; border-radius:6px; background:var(--surface-strong); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10px; color:var(--violet); flex:0 0 auto; }
+
+  .installed-badge{
+    display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10px;
+    padding:4px 9px; border-radius:100px; background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); color:var(--ok);
+  }
+</style>
+</head>
+<body>
+
+<div class="device" id="device">
+  <div class="status-row"><span id="clock">9:41</span><span style="letter-spacing:1px;">●●●●  🔋</span></div>
+
+  <div class="toast" id="toast">+20 XP</div>
+
+  <!-- HOME -->
+  <div class="screen" id="screen-home">
+    <div class="topbar">
+      <div class="wordmark"><div class="mark"></div>ASCENSION</div>
+      <div class="pill-row">
+        <div class="pill" onclick="openOverlay('stats')" style="cursor:pointer;">🔥 <span id="streak-val">27</span></div>
+        <div class="pill" onclick="openOverlay('customize')" style="cursor:pointer;">◆ <span id="coin-val">1,240</span></div>
+      </div>
+    </div>
+
+    <div class="glass hex-card">
+      <div class="rank-shield-row"><div class="rank-shield" id="rank-shield"></div><div class="rank-label" id="rank-label">RANK · WARRIOR</div></div>
+      <div class="level-label">Level <span id="level-val" class="count-num">14</span></div>
+      <div style="position:relative; width:280px; height:280px; margin:0 auto;">
+        <svg id="hex-svg" viewBox="0 0 280 280" width="280" height="280"></svg>
+        <div id="hex-labels"></div>
+      </div>
+      <div class="xp-block">
+        <div class="xp-row"><span>XP</span><span id="xp-text">320 / 500</span></div>
+        <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-fill" style="width:64%;"></div></div>
+      </div>
+    </div>
+
+    <div class="section-title">Today's Quests <span class="see-all" onclick="goTo('quests')">See all →</span></div>
+    <div id="home-quests" class="stagger"></div>
+
+    <div class="glass mentor-card" onclick="cycleMentor()" style="cursor:pointer;">
+      <div class="mentor-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l2.4 7.2H22l-6 4.4 2.4 7.2L12 16.4 5.6 20.8 8 13.6 2 9.2h7.6z"/></svg></div>
+      <div>
+        <div class="mentor-label">AI Mentor · tap for more</div>
+        <div class="mentor-text" id="mentor-text"><b>Your Body stat</b> climbed 12% this week. One more quest today locks in the streak.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTS -->
+  <div class="screen hidden" id="screen-quests">
+    <div class="topbar"><div class="h1" style="margin:0;">Quests</div></div>
+    <div class="sub">Generated for you this morning · resets in <span id="quest-reset-timer">14h 22m</span></div>
+    <div id="quest-groups" class="stagger"></div>
+  </div>
+
+  <!-- RESET -->
+  <div class="screen hidden" id="screen-reset">
+    <div class="topbar"><div class="h1" style="margin:0;">Life Reset</div></div>
+    <div class="sub">A guided sequence to pull you out of a spiral.</div>
+    <div class="glass reset-hero">
+      <div class="reset-ring">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+          <circle id="reset-progress-ring" cx="60" cy="60" r="52" fill="none" stroke="url(#resetGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/>
+          <defs><linearGradient id="resetGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#A78BFA"/><stop offset="100%" stop-color="#7C3AED"/></linearGradient></defs>
+        </svg>
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+          <div style="font-family:var(--font-mono); font-size:20px; font-weight:600;" id="reset-count">0/10</div>
+          <div style="font-size:9.5px; color:var(--text-faint);">complete</div>
+        </div>
+      </div>
+      <div class="h1" style="font-size:16px;">Reset Sequence</div>
+      <div class="sub" style="margin-bottom:0;">Move through each checkpoint at your pace.</div>
+      <button class="begin-btn" onclick="beginReset()">Begin Reset</button>
+    </div>
+    <div id="reset-steps"></div>
+  </div>
+
+  <!-- RECOVERY -->
+  <div class="screen hidden" id="screen-recovery">
+    <div class="topbar"><div class="h1" style="margin:0;">Recovery</div></div>
+    <div class="sub">Every day clean compounds. Track it.</div>
+    <div id="relapse-banners"></div>
+    <div id="addiction-list" class="stagger"></div>
+  </div>
+
+  <!-- COMMONS -->
+  <div class="screen hidden" id="screen-commons">
+    <div class="topbar"><div class="h1" style="margin:0;">The Commons</div></div>
+    <div class="sub">No followers. No feed algorithm. Just people ascending.</div>
+    <div class="guild-strip" id="guild-strip"></div>
+    <div id="feed" class="stagger"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen hidden" id="screen-profile">
+    <div class="profile-head">
+      <div class="avatar-big" id="avatar-big" onclick="custCat='Icons'; openOverlay('customize');" style="cursor:pointer;">W</div>
+      <div class="h1" style="margin-bottom:2px;" id="profile-title">Warrior · Lvl 14</div>
+      <div class="sub" id="profile-sub">@ascender · Ascending since Feb 2026</div>
+    </div>
+    <div class="glass card">
+      <div class="row-between" style="margin-bottom:14px;"><span class="small" style="font-weight:600;">This Week</span><span class="small muted">XP earned</span></div>
+      <div class="bar-chart" id="week-chart"></div>
+    </div>
+
+    <div class="section-title">Progression</div>
+    <div class="glass menu-row" onclick="openOverlay('stats')"><div class="menu-icon">📊</div><div class="menu-label">Statistics &amp; Reports</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="openOverlay('ranks')"><div class="menu-icon">🏆</div><div class="menu-label">Level &amp; Ranks</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="openOverlay('achievements')"><div class="menu-icon">🎖</div><div class="menu-label">Achievements</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="openOverlay('verify')"><div class="menu-icon">🛰</div><div class="menu-label">Verification Center</div><div class="menu-chevron">›</div></div>
+
+    <div class="section-title">Personalize</div>
+    <div class="glass menu-row" onclick="openOverlay('customize')"><div class="menu-icon">🎨</div><div class="menu-label">Customization</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="openOverlay('widgets')"><div class="menu-icon">▦</div><div class="menu-label">Widgets</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="openOverlay('health')"><div class="menu-icon">♥</div><div class="menu-label">Apple Health</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="openOverlay('settings')"><div class="menu-icon">⚙</div><div class="menu-label">Settings</div><div class="menu-chevron">›</div></div>
+
+    <div class="glass premium-card" onclick="openOverlay('premium')">
+      <div style="font-family:var(--font-display); font-weight:600; font-size:15px; margin-bottom:4px;">Ascension Premium</div>
+      <div class="small muted" style="margin-bottom:12px;">Unlimited AI coaching, deep recovery insights, guild creation, and custom widgets.</div>
+      <button class="begin-btn" style="margin-top:0;" onclick="event.stopPropagation(); openOverlay('premium')">Unlock Premium</button>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="navbar glass">
+    <button class="nav-btn active" data-tab="home" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" data-tab="quests" onclick="goTo('quests')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>Quests</span>
+    </button>
+    <button class="nav-btn" data-tab="reset" onclick="goTo('reset')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+      <span>Reset</span>
+    </button>
+    <button class="nav-btn" data-tab="recovery" onclick="goTo('recovery')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"/></svg>
+      <span>Recovery</span>
+    </button>
+    <button class="nav-btn" data-tab="commons" onclick="goTo('commons')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Commons</span>
+    </button>
+    <button class="nav-btn" data-tab="profile" onclick="goTo('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Profile</span>
+    </button>
+  </div>
+
+  <!-- OVERLAYS -->
+  <div class="overlay" id="overlay-stats">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('stats')">‹</button><div class="overlay-title">Statistics</div></div>
+    <div class="overlay-body">
+      <div class="segment" id="stats-segment">
+        <button class="active" onclick="setStatsPeriod('weekly')">Weekly</button>
+        <button onclick="setStatsPeriod('monthly')">Monthly</button>
+        <button onclick="setStatsPeriod('yearly')">Yearly</button>
+      </div>
+      <div id="stats-body" class="stagger"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay-ranks">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('ranks')">‹</button><div class="overlay-title">Level &amp; Ranks</div></div>
+    <div class="overlay-body stagger" id="ranks-body"></div>
+  </div>
+
+  <div class="overlay" id="overlay-achievements">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('achievements')">‹</button><div class="overlay-title">Achievements</div></div>
+    <div class="overlay-body" id="achievements-body"></div>
+  </div>
+
+  <div class="overlay" id="overlay-customize">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('customize')">‹</button><div class="overlay-title">Customization</div></div>
+    <div class="overlay-body">
+      <div class="cust-tabs" id="cust-tabs"></div>
+      <div class="cust-grid stagger" id="cust-grid"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay-health">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('health')">‹</button><div class="overlay-title">Apple Health</div></div>
+    <div class="overlay-body">
+      <div class="glass card row-between" style="margin-bottom:16px;">
+        <span class="small" style="font-weight:600;">Connection</span>
+        <div class="pill" id="health-connection-pill" style="cursor:pointer;" onclick="toggleSource('health')">🟢 Connected</div>
+      </div>
+      <div id="health-list"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay-widgets">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('widgets')">‹</button><div class="overlay-title">Widgets</div></div>
+    <div class="overlay-body">
+      <div class="sub">Long-press your home screen and add Ascension to keep your hexagon in view.</div>
+      <div class="widget-label">Small — Streak</div>
+      <div class="widget-mock"><div class="widget-small" id="widget-small"></div></div>
+      <div class="glass menu-row" onclick="addWidget('Small')"><div class="menu-icon">＋</div><div class="menu-label">Add Small Widget</div></div>
+      <div class="widget-label">Medium — Today's Quests</div>
+      <div class="widget-mock"><div class="widget-medium" id="widget-medium"></div></div>
+      <div class="glass menu-row" onclick="addWidget('Medium')"><div class="menu-icon">＋</div><div class="menu-label">Add Medium Widget</div></div>
+      <div class="widget-label">Large — Hexagon &amp; XP</div>
+      <div class="widget-mock"><div class="widget-large" id="widget-large"></div></div>
+      <div class="glass menu-row" onclick="addWidget('Large')"><div class="menu-icon">＋</div><div class="menu-label">Add Large Widget</div></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay-settings">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('settings')">‹</button><div class="overlay-title">Settings</div></div>
+    <div class="overlay-body" id="settings-body"></div>
+  </div>
+
+  <div class="overlay" id="overlay-premium">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('premium')">‹</button><div class="overlay-title">Premium</div></div>
+    <div class="overlay-body" id="premium-body"></div>
+  </div>
+
+  <div class="overlay" id="overlay-verify">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('verify')">‹</button><div class="overlay-title">Verification Center</div></div>
+    <div class="overlay-body">
+      <div class="glass card" style="display:flex; align-items:center; gap:16px;">
+        <div class="honesty-ring-wrap"><svg id="honesty-ring" width="64" height="64" viewBox="0 0 64 64"></svg></div>
+        <div>
+          <div style="font-family:var(--font-display); font-weight:600; font-size:14.5px;">Honesty Score</div>
+          <div class="small muted">Cross-checked against connected sources this week.</div>
+        </div>
+      </div>
+      <div class="section-title">Connected Sources</div>
+      <div id="sources-list"></div>
+      <div class="section-title">App Activity Today</div>
+      <div class="glass card" id="app-activity"></div>
+      <div class="section-title">Recent Verification Events</div>
+      <div class="glass card" id="verify-events"></div>
+    </div>
+  </div>
+
+  <!-- LEVEL UP CELEBRATION -->
+  <div class="levelup-overlay" id="levelup-overlay">
+    <div class="levelup-particles" id="levelup-particles"></div>
+    <div class="levelup-ring"><div class="levelup-num" id="levelup-num">15</div></div>
+    <div class="levelup-title">Rank Ascended</div>
+    <div class="levelup-sub" id="levelup-sub">You are now Level 15</div>
+  </div>
+
+  <!-- BREATHING MODAL -->
+  <div class="breathe-overlay" id="breathe-overlay">
+    <div class="breathe-circle" id="breathe-circle">Breathe</div>
+    <div class="small muted" style="margin-top:22px;" id="breathe-instruction">Tap start when you're ready</div>
+    <button class="begin-btn" style="width:auto; padding:10px 26px; margin-top:26px;" onclick="closeBreathe()">Done, I'm okay</button>
+  </div>
+
+  <!-- STAT DETAIL MODAL -->
+  <div class="stat-modal-wrap" id="stat-modal-wrap">
+    <div class="stat-modal-backdrop" onclick="closeStatModal()"></div>
+    <div class="glass stat-modal" id="stat-modal-content"></div>
+  </div>
+
+  <!-- ADD TO HOME SCREEN BANNER (iOS Safari) -->
+  <div class="a2hs-banner" id="a2hs-banner">
+    <div class="a2hs-head">
+      <div class="a2hs-icon"></div>
+      <div>
+        <div class="a2hs-title">Install Ascension</div>
+        <div class="a2hs-sub">Add it to your Home Screen for the full app experience</div>
+      </div>
+      <div class="a2hs-close" onclick="dismissA2HS()">✕</div>
+    </div>
+    <div class="a2hs-step"><div class="a2hs-num">1</div>Tap the <b>Share</b> icon <svg width="13" height="16" viewBox="0 0 24 28" style="vertical-align:-3px;"><path d="M12 1v16M6 7l6-6 6 6M3 13v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V13" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> in Safari's toolbar</div>
+    <div class="a2hs-step"><div class="a2hs-num">2</div>Scroll down and tap <b>Add to Home Screen</b></div>
+    <div class="a2hs-step"><div class="a2hs-num">3</div>Tap <b>Add</b> in the top right corner</div>
+  </div>
+</div>
+
+<script>
+/* ---------------- STATE ---------------- */
+const state = {
+  level: 14, xp: 320, xpToNext: 500, rank: 'Warrior', coins: 1240, streak: 27, username: 'ascender',
+  stats: { discipline:72, body:65, mind:58, social:44, wealth:38, wisdom:61, focus:52 },
+};
+
+const statMeta = [
+  { key:'discipline', label:'DISCIPLINE', color:'var(--discipline)', hex:'#9F7AEA' },
+  { key:'body',       label:'BODY',       color:'var(--bodystat)',  hex:'#FB7185' },
+  { key:'mind',        label:'MIND',       color:'var(--mind)',      hex:'#22D3EE' },
+  { key:'social',     label:'SOCIAL',     color:'var(--social)',    hex:'#FBBF24' },
+  { key:'wealth',     label:'WEALTH',     color:'var(--wealth)',    hex:'#34D399' },
+  { key:'wisdom',     label:'WISDOM',     color:'var(--wisdom)',    hex:'#818CF8' },
+  { key:'focus',      label:'FOCUS',      color:'var(--focus)',     hex:'#A3E635' },
+];
+
+/* ---- Verified data sources (mock, drives the honesty system) ---- */
+const screenTime = { tiktok:46, instagram:12, youtube:8, safari:22 };
+let screentimeConnected = true;
+const healthSync = { lastWorkout:'Morning Run · 5.1km · 27:40 · Zone 3 HR confirmed', stepsToday:8412, connected:true };
+const webShield = { blockedToday:3, connected:true };
+let verifyEvents = [
+  { time:'9:14 AM', text:'Morning Run verified via GPS + Heart Rate (Apple Health)', type:'pass' },
+  { time:'8:40 AM', text:'Cold Shower marked complete — self-reported, no sensor available', type:'neutral' },
+];
+
+let quests = [
+  { id:1, name:'Morning Run · 3km', time:'MORNING', xp:25, coins:10, stat:'body', done:true, verifyMethod:'health', status:'pass' },
+  { id:2, name:'Cold Shower', time:'MORNING', xp:15, coins:5, stat:'discipline', done:true, verifyMethod:null },
+  { id:3, name:'No Doomscrolling', time:'ALL DAY', xp:20, coins:8, stat:'discipline', done:false, verifyMethod:'screentime', verifyApp:'tiktok', appLabel:'TikTok', threshold:20 },
+  { id:4, name:'Read 30 Pages', time:'MIDDAY', xp:20, coins:8, stat:'wisdom', done:false, verifyMethod:null },
+  { id:5, name:'Lift · Push Day', time:'MIDDAY', xp:30, coins:12, stat:'body', done:false, verifyMethod:'health' },
+  { id:6, name:'Journal', time:'EVENING', xp:15, coins:5, stat:'mind', done:false, verifyMethod:null },
+  { id:7, name:'Deep Work Block', time:'MIDDAY', xp:25, coins:10, stat:'focus', done:false, verifyMethod:'webshield' },
+  { id:8, name:'Screen Time Under Limit', time:'ALL DAY', xp:15, coins:5, stat:'focus', done:false, verifyMethod:'screentime', verifyApp:'safari', appLabel:'Safari browsing', threshold:30 },
+  { id:9, name:'Clean Your Room', time:'EVENING', xp:10, coins:5, stat:'discipline', done:false, verifyMethod:null },
+];
+
+let resetSteps = [
+  'Take a Shower','Open the Windows','Hydrate','Clean Your Room','Walk Outside',
+  'Quick Workout','Journal 5 Minutes','Stretch','Prepare a Healthy Meal','Wind Down for Sleep'
+].map((name,i)=>({ id:i, name, done:false }));
+
+const addictions = [
+  { name:'Nicotine', color:'var(--wealth)', days:41, hours:6, saved:287, urges:12, watchApp:null },
+  { name:'Doomscrolling · TikTok', color:'var(--mind)', days:9, hours:14, saved:0, urges:31, watchApp:'tiktok' },
+];
+
+const feed = [
+  { id:1, name:'Mara_Ascends', tag:'Guild · Iron Circle', time:'22m ago', badge:'🔥 30-Day Streak', body:'Hit day 30 of Winter Arc. Coldest shower of my life this morning but the hexagon does not lie — Discipline is finally catching up to Body.', hearts:34, respects:11, fire:19, replies:6 },
+  { id:2, name:'kenji.wisdom', tag:'Guild · Readathon Crew', time:'1h ago', badge:'📚 Book #14 Finished', body:'Finished Atomic Habits. Wisdom stat +6 tonight. Starting Deep Work next — anyone want to read it together in the Commons?', hearts:21, respects:26, fire:8, replies:14 },
+  { id:3, name:'quietstorm_', tag:'Recovery · 60 Days', time:'3h ago', badge:'⚔️ Milestone · 60 Days', body:'60 days nicotine-free. Saved enough to book the flight I kept putting off. The urge button genuinely got me through week 2.', hearts:58, respects:40, fire:22, replies:9 },
+];
+
+/* ---------------- HELPERS ---------------- */
+function goTo(tab){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('screen-'+tab).classList.remove('hidden');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.getElementById('screen-'+tab).scrollTop = 0;
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 1400);
+}
+
+function grantXP(amount, coins){
+  state.xp += amount; state.coins += coins;
+  let leveled = false;
+  while(state.xp >= state.xpToNext){
+    state.xp -= state.xpToNext; state.level += 1; state.xpToNext = Math.round(state.xpToNext*1.08);
+    leveled = true;
+  }
+  renderTopStats();
+  if(leveled) playLevelUp();
+}
+
+function playLevelUp(){
+  const ov = document.getElementById('levelup-overlay');
+  document.getElementById('levelup-num').textContent = state.level;
+  document.getElementById('levelup-sub').textContent = 'You are now Level ' + state.level;
+  const particles = document.getElementById('levelup-particles');
+  particles.innerHTML = Array.from({length:18}).map(()=>{
+    const angle = Math.random()*Math.PI*2, dist = 90+Math.random()*70;
+    const px = Math.cos(angle)*dist, py = Math.sin(angle)*dist;
+    const delay = Math.random()*0.3;
+    return `<span style="--px:${px}px; --py:${py}px; animation-delay:${delay}s;"></span>`;
+  }).join('');
+  ov.classList.add('open');
+  clearTimeout(playLevelUp._t);
+  playLevelUp._t = setTimeout(()=> ov.classList.remove('open'), 2400);
+}
+
+function bumpStat(key, amt){
+  state.stats[key] = Math.min(100, state.stats[key] + amt);
+  drawHexagon();
+}
+
+function animateCount(el, from, to, suffix){
+  suffix = suffix || '';
+  const dur = 500; const t0 = performance.now();
+  function frame(now){
+    const p = Math.min(1, (now-t0)/dur);
+    const ease = 1 - Math.pow(1-p, 3);
+    const val = Math.round(from + (to-from)*ease);
+    el.textContent = val.toLocaleString() + suffix;
+    if(p<1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+let prevTop = { coins:state.coins, streak:state.streak, level:state.level };
+function renderTopStats(){
+  const coinEl = document.getElementById('coin-val');
+  const streakEl = document.getElementById('streak-val');
+  const levelEl = document.getElementById('level-val');
+  if(prevTop.coins !== state.coins) animateCount(coinEl, prevTop.coins, state.coins);
+  else coinEl.textContent = state.coins.toLocaleString();
+  if(prevTop.streak !== state.streak) animateCount(streakEl, prevTop.streak, state.streak);
+  else streakEl.textContent = state.streak;
+  if(prevTop.level !== state.level) animateCount(levelEl, prevTop.level, state.level);
+  else levelEl.textContent = state.level;
+  prevTop = { coins:state.coins, streak:state.streak, level:state.level };
+  document.getElementById('xp-text').textContent = state.xp + ' / ' + state.xpToNext;
+  document.getElementById('xp-fill').style.width = Math.round((state.xp/state.xpToNext)*100) + '%';
+}
+
+/* ---------------- TEXT ANIMATIONS ---------------- */
+function typewrite(el, html){
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  const text = div.textContent;
+  el.innerHTML = '';
+  const cursor = document.createElement('span');
+  cursor.className = 'typewrite-cursor';
+  let i = 0;
+  clearInterval(typewrite._t);
+  typewrite._t = setInterval(()=>{
+    i++;
+    el.textContent = text.slice(0, i);
+    el.appendChild(cursor);
+    if(i >= text.length){ clearInterval(typewrite._t); cursor.remove(); el.innerHTML = html; }
+  }, 16);
+}
+
+const mentorMessages = [
+  "<b>Your Body stat</b> climbed 12% this week. One more quest today locks in the streak.",
+  "<b>Wisdom</b> hasn't moved in 4 days — a 30-page read tonight would break that plateau.",
+  "You're <b>1 quest</b> away from protecting today's streak. Don't let it snap.",
+  "<b>Discipline</b> is your strongest stat this month. Lean into a Life Reset to pull Focus up to match.",
+  "Screen Time shows heavy TikTok use today — want me to swap in a lighter Focus quest tomorrow?",
+  "<b>Social</b> is your lowest stat. Post one win in the Commons and I'll count it toward growth.",
+];
+let mentorIdx = 0;
+function cycleMentor(){
+  mentorIdx = (mentorIdx+1) % mentorMessages.length;
+  typewrite(document.getElementById('mentor-text'), mentorMessages[mentorIdx]);
+}
+
+function editProfile(){
+  const name = prompt('Choose a username:', state.username);
+  if(!name) return;
+  state.username = name.replace(/\s+/g,'').toLowerCase();
+  document.getElementById('avatar-big').textContent = state.username[0].toUpperCase();
+  document.getElementById('profile-sub').textContent = '@'+state.username+' · Ascending since Feb 2026';
+  closeOverlay('settings');
+  showToast('Profile updated');
+  saveState();
+}
+
+function addWidget(size){
+  showToast(size+' widget added to Home Screen');
+}
+
+/* ---------------- HEPTAGON (life graph) ---------------- */
+let hexCurrent = {...state.stats};
+const STAT_COUNT = statMeta.length;
+const ANGLE_STEP = 360 / STAT_COUNT;
+function polygonPoints(vals, cx, cy, maxR){
+  return statMeta.map((m,i)=>{
+    const angle = (-90 + i*ANGLE_STEP) * Math.PI/180;
+    const r = maxR * (vals[m.key]/100);
+    return [cx + r*Math.cos(angle), cy + r*Math.sin(angle)];
+  });
+}
+function drawHexagon(){
+  const svg = document.getElementById('hex-svg');
+  const cx=140, cy=140, maxR=104;
+  const target = {...state.stats};
+  const start = {...hexCurrent};
+  const dur = 650; const t0 = performance.now();
+
+  function guideHex(scale){
+    return statMeta.map((m,i)=>{
+      const angle=(-90+i*ANGLE_STEP)*Math.PI/180;
+      return (cx+maxR*scale*Math.cos(angle))+','+(cy+maxR*scale*Math.sin(angle));
+    }).join(' ');
+  }
+
+  function frame(now){
+    const p = Math.min(1, (now-t0)/dur);
+    const ease = 1 - Math.pow(1-p, 3);
+    const vals = {};
+    statMeta.forEach(m=> vals[m.key] = start[m.key] + (target[m.key]-start[m.key])*ease );
+    const pts = polygonPoints(vals, cx, cy, maxR);
+    const pointsStr = pts.map(p=>p.join(',')).join(' ');
+
+    svg.innerHTML = `
+      <defs>
+        <radialGradient id="hexFill" cx="50%" cy="50%" r="65%">
+          <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.12"/>
+        </radialGradient>
+      </defs>
+      <polygon points="${guideHex(1)}" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+      <polygon points="${guideHex(0.66)}" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+      <polygon points="${guideHex(0.33)}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      ${statMeta.map((m,i)=>{ const a=(-90+i*ANGLE_STEP)*Math.PI/180; return `<line x1="${cx}" y1="${cy}" x2="${cx+maxR*Math.cos(a)}" y2="${cy+maxR*Math.sin(a)}" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>`; }).join('')}
+      <polygon points="${pointsStr}" fill="url(#hexFill)" stroke="#A78BFA" stroke-width="2" stroke-linejoin="round"/>
+      ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${statMeta[i].hex}" stroke="#050506" stroke-width="2"/>`).join('')}
+      <text x="${cx}" y="${cy-6}" text-anchor="middle" style="font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; fill:#F5F5F7;">${Math.round(statMeta.reduce((s,m)=>s+vals[m.key],0)/STAT_COUNT)}</text>
+      <text x="${cx}" y="${cy+13}" text-anchor="middle" style="font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:2px; fill:rgba(245,245,247,0.4);">OVERALL</text>
+    `;
+
+    if(p<1) requestAnimationFrame(frame);
+    else hexCurrent = target;
+  }
+  requestAnimationFrame(frame);
+
+  // labels (static position, only render once per full redraw of layout)
+  const labelWrap = document.getElementById('hex-labels');
+  labelWrap.innerHTML = '';
+  labelWrap.style.cssText = 'position:absolute; inset:0; pointer-events:none;';
+  statMeta.forEach((m,i)=>{
+    const angle = (-90+i*ANGLE_STEP)*Math.PI/180;
+    const lr = 132;
+    const x = cx + lr*Math.cos(angle), y = cy + lr*Math.sin(angle);
+    const el = document.createElement('div');
+    el.className='stat-tag';
+    el.style.left = x+'px'; el.style.top = y+'px';
+    el.innerHTML = `<div class="dot" style="background:${m.hex}"></div>${m.label}<div class="val">${state.stats[m.key]}</div>`;
+    el.onclick = ()=>openStatModal(m.key);
+    labelWrap.appendChild(el);
+  });
+}
+
+/* ---------------- QUESTS ---------------- */
+function verifyBadge(q){
+  if(q.verifyMethod === null) return `<div class="verify-badge self">◆ self-reported</div>`;
+  if(q.status === 'verifying') return '';
+  if(q.status === 'fail') return `<div class="verify-badge fail">✕ flagged<span class="recheck-btn" onclick="event.stopPropagation(); recheckQuest(${q.id})">Recheck</span></div>`;
+  if(q.done && q.status === 'pass'){
+    const src = q.verifyMethod==='health' ? 'Apple Health' : q.verifyMethod==='screentime' ? 'Screen Time' : 'Web Shield';
+    return `<div class="verify-badge pass">✓ verified · ${src}</div>`;
+  }
+  const src = q.verifyMethod==='health' ? 'Apple Health' : q.verifyMethod==='screentime' ? 'Screen Time' : 'Web Shield';
+  return `<div class="verify-badge self" style="color:var(--text-faint);">◇ checks ${src} on complete</div>`;
+}
+
+function questRow(q){
+  const flagged = q.status === 'fail';
+  const verifying = q.status === 'verifying';
+  return `
+    <div class="glass quest-card ${flagged?'flagged':''} ${verifying?'verifying':''}" id="quest-${q.id}">
+      ${verifying ? `<div class="verify-spinner"></div>` : `
+      <div class="quest-check ${q.done?'done':''}" onclick="toggleQuest(${q.id})">
+        <div class="burst" id="burst-${q.id}"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#050506" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>`}
+      <div class="quest-info">
+        <div class="quest-name ${q.done?'done':''}">${q.name}</div>
+        <div class="quest-meta">${q.time} · ${statMeta.find(m=>m.key===q.stat).label}</div>
+        ${verifying ? `<div class="verify-badge" style="color:var(--violet);">◌ checking ${q.verifyMethod==='health'?'Apple Health':q.verifyMethod==='screentime'?'Screen Time':'Web Shield'}…</div>` : verifyBadge(q)}
+      </div>
+      <div class="quest-reward">+${q.xp}xp</div>
+    </div>`;
+}
+
+function fireBurst(id){
+  const wrap = document.getElementById('burst-'+id);
+  if(!wrap) return;
+  wrap.innerHTML = Array.from({length:10}).map(()=>{
+    const angle = Math.random()*Math.PI*2, dist = 16+Math.random()*14;
+    return `<span style="--bx:${Math.cos(angle)*dist}px; --by:${Math.sin(angle)*dist}px;"></span>`;
+  }).join('');
+}
+
+function toggleQuest(id){
+  const q = quests.find(q=>q.id===id);
+  if(q.status === 'verifying') return;
+
+  if(!q.done){
+    // completing — verified quests run a check first
+    if(q.verifyMethod){
+      q.status = 'verifying';
+      renderQuests();
+      setTimeout(()=>runVerification(id), 1100);
+      return;
+    }
+    completeQuest(q, true);
+  } else {
+    // un-completing (only allowed for already-passed/self quests)
+    q.done = false; q.status = null;
+    state.xp = Math.max(0, state.xp - q.xp); state.coins = Math.max(0, state.coins - q.coins);
+    bumpStat(q.stat, -4);
+    renderTopStats();
+    renderQuests();
+    saveState();
+  }
+}
+
+function runVerification(id){
+  const q = quests.find(q=>q.id===id);
+  let passed = true, detail = '';
+  if(q.verifyMethod === 'screentime' && !screentimeConnected){
+    passed = false; detail = 'Screen Time is disconnected — reconnect it in the Verification Center';
+  } else if(q.verifyMethod === 'health' && !healthSync.connected){
+    passed = false; detail = 'Apple Health is disconnected — reconnect it in the Verification Center';
+  } else if(q.verifyMethod === 'webshield' && !webShield.connected){
+    passed = false; detail = 'Web Shield is disconnected — reconnect it in the Verification Center';
+  } else if(q.verifyMethod === 'screentime'){
+    const used = screenTime[q.verifyApp] || 0;
+    passed = used <= q.threshold;
+    detail = passed
+      ? `${q.appLabel} usage ${used}m — under your ${q.threshold}m limit`
+      : `${used}m on ${q.appLabel} detected — over your ${q.threshold}m limit`;
+  } else if(q.verifyMethod === 'health'){
+    passed = true;
+    detail = healthSync.lastWorkout;
+  } else if(q.verifyMethod === 'webshield'){
+    passed = true;
+    detail = webShield.blockedToday + ' distracting sites blocked during this block';
+  }
+
+  const now = new Date();
+  const timeStr = (now.getHours()%12||12)+':'+String(now.getMinutes()).padStart(2,'0')+' '+(now.getHours()>=12?'PM':'AM');
+
+  if(passed){
+    q.status = 'pass';
+    completeQuest(q, false);
+    showToast('✓ Verified — +'+q.xp+' XP');
+    verifyEvents.unshift({ time:timeStr, text:q.name+' verified — '+detail, type:'pass' });
+  } else {
+    q.status = 'fail';
+    q.done = false;
+    renderQuests();
+    showToast('⚠ Flagged — not credited');
+    verifyEvents.unshift({ time:timeStr, text:q.name+' flagged — '+detail, type:'fail' });
+    checkAddictionFlag(q.verifyApp);
+    saveState();
+  }
+}
+
+function recheckQuest(id){
+  const q = quests.find(q=>q.id===id);
+  q.status = 'verifying';
+  renderQuests();
+  setTimeout(()=>runVerification(id), 1000);
+}
+
+function completeQuest(q, instant){
+  q.done = true;
+  if(!q.status) q.status = 'pass';
+  grantXP(q.xp, q.coins);
+  bumpStat(q.stat, 4);
+  renderQuests();
+  fireBurst(q.id);
+  if(instant) showToast('+'+q.xp+' XP · +'+q.coins+' coins');
+  saveState();
+}
+
+function renderQuests(){
+  document.getElementById('home-quests').innerHTML = quests.slice(0,4).map(q=>questRow(q)).join('');
+  const groups = {};
+  quests.forEach(q=>{ (groups[q.time] = groups[q.time]||[]).push(q); });
+  document.getElementById('quest-groups').innerHTML = Object.keys(groups).map(g=>`
+    <div class="section-title">${g}</div>
+    ${groups[g].map(q=>questRow(q)).join('')}
+  `).join('');
+}
+
+/* ---------------- RESET ---------------- */
+function renderReset(){
+  const done = resetSteps.filter(s=>s.done).length;
+  document.getElementById('reset-count').textContent = done+'/'+resetSteps.length;
+  const circumference = 326.7;
+  document.getElementById('reset-progress-ring').style.strokeDashoffset = circumference - (circumference*done/resetSteps.length);
+  document.getElementById('reset-steps').innerHTML = resetSteps.map(s=>`
+    <div class="glass step-item" onclick="toggleStep(${s.id})">
+      <div class="step-num ${s.done?'done':''}">${s.done? '✓' : s.id+1}</div>
+      <div class="step-name ${s.done?'done':''}">${s.name}</div>
+    </div>
+  `).join('');
+}
+function toggleStep(id){
+  const s = resetSteps.find(s=>s.id===id);
+  s.done = !s.done;
+  if(s.done){ grantXP(8,2); showToast('Checkpoint complete'); }
+  renderReset();
+  saveState();
+}
+function beginReset(){
+  resetSteps.forEach(s=>s.done=false);
+  renderReset();
+  document.getElementById('reset-steps').scrollIntoView({behavior:'smooth'});
+  showToast('Reset sequence started');
+}
+
+/* ---------------- RECOVERY ---------------- */
+let dismissedFlags = {};
+function checkAddictionFlag(app){
+  renderRelapseBanners();
+}
+function renderRelapseBanners(){
+  const wrap = document.getElementById('relapse-banners');
+  if(!wrap) return;
+  const flagged = addictions.filter(a => a.watchApp && screenTime[a.watchApp] > 0 && !dismissedFlags[a.name]);
+  wrap.innerHTML = flagged.map(a=>`
+    <div class="relapse-banner">
+      <div style="font-size:16px;">⚠</div>
+      <div style="flex:1;">
+        <div class="rt">Activity detected on ${a.name.split('·').pop().trim()}</div>
+        <div class="rd">${screenTime[a.watchApp]} minutes logged today via Screen Time. This may affect your streak — you know your situation better than a sensor does.</div>
+        <div class="relapse-actions">
+          <button class="dismiss" onclick="dismissFlag('${a.name}')">False positive, dismiss</button>
+          <button class="log" onclick="logRelapse('${a.name}')">Log it, reset streak</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function dismissFlag(name){ dismissedFlags[name] = true; renderRelapseBanners(); showToast('Dismissed'); saveState(); }
+function logRelapse(name){
+  const a = addictions.find(a=>a.name===name);
+  a.days = 0; a.hours = 0;
+  dismissedFlags[name] = true;
+  renderRelapseBanners(); renderRecovery();
+  showToast('Streak reset — tomorrow is day 1 again');
+  saveState();
+}
+
+function renderRecovery(){
+  renderRelapseBanners();
+  document.getElementById('addiction-list').innerHTML = addictions.map((a,i)=>{
+    const atRisk = a.watchApp && screenTime[a.watchApp] > 0 && !dismissedFlags[a.name];
+    return `
+    <div class="glass addiction-card">
+      <div class="addiction-head">
+        <div class="addiction-name">${a.name}</div>
+        <div class="pill" style="border-color:${atRisk?'rgba(248,113,103,0.5)':a.color+'44'};">${atRisk?'🟠 At risk':'🟢 Clean'}</div>
+      </div>
+      <div class="timer" style="color:${a.color}">${a.days}d ${a.hours}h</div>
+      <div class="timer-sub">sobriety streak · cross-checked via Screen Time</div>
+      <div class="stat-mini-row">
+        <div class="stat-mini"><div class="v">$${a.saved}</div><div class="l">Money saved</div></div>
+        <div class="stat-mini"><div class="v">${a.urges}</div><div class="l">Urges beaten</div></div>
+        <div class="stat-mini"><div class="v">A+</div><div class="l">Trend</div></div>
+      </div>
+      <button class="urge-btn" onclick="openBreathe()">⚠ I have an urge right now</button>
+    </div>
+  `;}).join('') + `
+    <div class="glass card" style="text-align:center; padding:20px; color:var(--text-faint); font-size:12.5px;" onclick="addCustomAddiction()">
+      + Add a custom addiction to track
+    </div>`;
+}
+
+/* ---------------- COMMONS ---------------- */
+function renderCommons(){
+  document.getElementById('guild-strip').innerHTML = ['🛡 Iron Circle','📚 Readathon Crew','🏋 Fitness League','🌅 Winter Arc'].map((g,i)=>
+    `<div class="glass guild-chip ${i===0?'active':''}" onclick="toggleGuild(this)">${g}</div>`).join('');
+  document.getElementById('feed').innerHTML = `<div class="glass post-card" style="text-align:center; color:var(--text-faint); font-size:12.5px; cursor:pointer;" onclick="composePost()">+ Share a win with the Commons</div>` + feed.map((p,i)=>`
+    <div class="glass post-card">
+      <div class="post-head">
+        <div class="post-avatar" style="background:linear-gradient(145deg, var(--violet), var(--violet-deep));"></div>
+        <div>
+          <div class="post-name">${p.name}</div>
+          <div class="post-time">${p.tag} · ${p.time}</div>
+        </div>
+      </div>
+      <div class="post-badge">${p.badge}</div>
+      <div class="post-body">${p.body}</div>
+      <div class="reactions">
+        <div class="react-btn" onclick="reactBump(this,'❤')">❤ ${p.hearts}</div>
+        <div class="react-btn" onclick="reactBump(this,'⭐')">⭐ ${p.respects}</div>
+        <div class="react-btn" onclick="reactBump(this,'🔥')">🔥 ${p.fire}</div>
+        <div class="react-btn" onclick="replyToPost(${p.id})">💬 ${p.replies}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function reactBump(el, emoji){
+  el.classList.toggle('active');
+  const n = parseInt(el.textContent.trim().split(' ')[1]);
+  el.innerHTML = emoji+' '+(el.classList.contains('active')? n+1 : n-1);
+}
+function replyToPost(id){
+  const text = prompt('Write a reply:');
+  if(!text) return;
+  const p = feed.find(p=>p.id===id);
+  p.replies += 1;
+  renderCommons();
+  showToast('Reply posted');
+}
+function composePost(){
+  const text = prompt('Share a win with the Commons:');
+  if(!text) return;
+  feed.unshift({ id:Date.now(), name:'You', tag:'Guild · Iron Circle', time:'just now', badge:'✍️ New Post', body:text, hearts:0, respects:0, fire:0, replies:0 });
+  renderCommons();
+  showToast('Posted to the Commons');
+}
+
+/* ---------------- PROFILE ---------------- */
+function renderProfile(){
+  document.getElementById('profile-title').textContent = state.rank + ' · Lvl ' + state.level;
+  const week = [40,65,30,80,55,95,70];
+  const days = ['M','T','W','T','F','S','S'];
+  document.getElementById('week-chart').innerHTML = week.map((v,i)=>`
+    <div class="bar-col">
+      <div class="bar-fill" style="height:${v*0.7}px;"></div>
+      <div class="bar-label">${days[i]}</div>
+    </div>`).join('');
+}
+
+/* ---------------- OVERLAYS ---------------- */
+function openOverlay(name){
+  document.getElementById('overlay-'+name).classList.add('open');
+  if(name==='stats') renderStats();
+  if(name==='ranks') renderRanks();
+  if(name==='achievements') renderAchievements();
+  if(name==='customize') renderCustomize();
+  if(name==='health') renderHealth();
+  if(name==='widgets') renderWidgets();
+  if(name==='settings') renderSettings();
+  if(name==='premium') renderPremium();
+  if(name==='verify') renderVerifyCenter();
+}
+function closeOverlay(name){ document.getElementById('overlay-'+name).classList.remove('open'); }
+
+/* ---- Statistics ---- */
+let statsPeriod = 'weekly';
+function setStatsPeriod(p){
+  statsPeriod = p;
+  document.querySelectorAll('#stats-segment button').forEach(b=>b.classList.toggle('active', b.textContent.toLowerCase()===p));
+  renderStats();
+}
+const statsRows = [
+  { name:'Habit Completion', unit:'%', weekly:[60,80,50,90,70,100,85], monthly:[62,71,78,74,81,88], yearly:[55,60,66,70,74,79,81,84,80,86,88,90] },
+  { name:'Recovery Streaks', unit:'d', weekly:[35,36,37,38,39,40,41], monthly:[12,20,28,33,38,41], yearly:[2,5,9,14,18,22,26,30,33,36,39,41] },
+  { name:'Sleep', unit:'h', weekly:[6.5,7,7.5,6,8,7.2,7.8], monthly:[6.8,7,7.1,7.3,7.2,7.4], yearly:[6.5,6.6,6.8,6.9,7,7.1,7.2,7.1,7.3,7.4,7.4,7.5] },
+  { name:'Workout Volume', unit:'k lb', weekly:[8,10,6,12,9,14,11], monthly:[38,44,49,52,58,63], yearly:[20,25,30,34,38,42,45,49,52,56,60,63] },
+  { name:'Books Read', unit:'', weekly:[0,0,1,0,0,1,0], monthly:[2,1,3,2,4,2], yearly:[1,2,1,3,2,4,2,3,4,3,5,4] },
+  { name:'Focus Hours', unit:'h', weekly:[2,3,1.5,4,2.5,5,3.5], monthly:[14,16,19,21,24,27], yearly:[8,10,12,14,15,17,19,20,22,24,26,27] },
+  { name:'Money Saved', unit:'$', weekly:[40,45,50,55,60,66,72], monthly:[120,180,210,240,260,287], yearly:[10,30,55,80,110,140,165,190,215,240,265,287] },
+  { name:'Journal Consistency', unit:'%', weekly:[70,80,60,90,80,100,90], monthly:[65,72,78,81,85,88], yearly:[40,48,55,60,65,70,74,78,80,84,86,88] },
+  { name:'Mood', unit:'/10', weekly:[6,7,6,8,7,9,8], monthly:[6.2,6.8,7,7.3,7.5,7.8], yearly:[5.5,5.8,6,6.3,6.5,6.8,7,7.1,7.3,7.5,7.6,7.8] },
+];
+function renderStats(){
+  document.getElementById('stats-body').innerHTML = statsRows.map(r=>{
+    const data = r[statsPeriod];
+    const max = Math.max(...data);
+    return `
+    <div class="glass stat-row-item">
+      <div class="stat-row-top"><span class="stat-row-name">${r.name}</span><span class="stat-row-val">${data[data.length-1]}${r.unit}</span></div>
+      <div class="sparkline">${data.map(v=>`<div class="spark-bar" style="height:${Math.max(6,(v/max)*28)}px;"></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ---- Ranks ---- */
+const ranks = [
+  {name:'Wanderer', xp:0}, {name:'Disciple', xp:500}, {name:'Builder', xp:1500}, {name:'Warrior', xp:3500},
+  {name:'Elite', xp:7000}, {name:'Ascendant', xp:12000}, {name:'Paragon', xp:20000}, {name:'Transcendent', xp:32000}
+];
+function renderRanks(){
+  const currentIdx = ranks.findIndex(x=>x.name===state.rank);
+  document.getElementById('ranks-body').innerHTML = ranks.map((r,i)=>{
+    const isCurrent = r.name === state.rank;
+    const reached = i <= currentIdx;
+    return `
+    <div class="glass rank-item ${reached?'reached':''} ${isCurrent?'current':''}">
+      <div class="rank-badge">${i+1}</div>
+      <div>
+        <div class="rank-name">${r.name}</div>
+        <div class="rank-xp">${r.xp.toLocaleString()} XP total ${isCurrent?'· current rank':''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---- Achievements ---- */
+const achievements = [
+  {name:'First Quest', desc:'Complete your first quest', icon:'✅', unlocked:true},
+  {name:'7-Day Streak', desc:'Keep a streak for a week', icon:'🔥', unlocked:true},
+  {name:'Reset Master', desc:'Finish 5 Life Resets', icon:'🌀', unlocked:true},
+  {name:'30 Days Clean', desc:'One month sober on any tracker', icon:'🛡', unlocked:true},
+  {name:'Bookworm', desc:'Finish 10 books', icon:'📚', unlocked:false},
+  {name:'Guild Founder', desc:'Create your own guild', icon:'🏰', unlocked:false},
+  {name:'Transcendent', desc:'Reach the final rank', icon:'✨', unlocked:false},
+  {name:'75 Hard', desc:'Complete a 75 Hard challenge', icon:'⚔️', unlocked:false},
+];
+function renderAchievements(){
+  document.getElementById('achievements-body').innerHTML = `<div class="ach-grid stagger">` + achievements.map(a=>`
+    <div class="glass ach-card ${a.unlocked?'':'locked'}">
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${a.desc}</div>
+    </div>`).join('') + `</div>`;
+}
+
+/* ---- Customize ---- */
+const cosmeticCats = {
+  'Hexagon Skins': [
+    {name:'Ascendant', unlocked:true, hex:'linear-gradient(145deg,#A78BFA,#7C3AED)'},
+    {name:'Ember', unlocked:false, hex:'linear-gradient(145deg,#FB7185,#B91C3C)'},
+    {name:'Wisdom', unlocked:true, hex:'linear-gradient(145deg,#818CF8,#4338CA)'},
+  ],
+  'Icons': [
+    {name:'Classic', unlocked:true, hex:'linear-gradient(145deg,#A78BFA,#7C3AED)'},
+    {name:'Gold', unlocked:false, hex:'linear-gradient(145deg,#E8C87A,#B8912F)'},
+    {name:'Mono', unlocked:true, hex:'linear-gradient(145deg,#3a3a3f,#111)'},
+  ],
+  'Themes': [
+    {name:'Void', unlocked:true, hex:'linear-gradient(145deg,#111,#000)'},
+    {name:'Ember', unlocked:false, hex:'linear-gradient(145deg,#FB7185,#7C2D3B)'},
+    {name:'Wealth', unlocked:false, hex:'linear-gradient(145deg,#34D399,#065F46)'},
+  ],
+  'Frames': [
+    {name:'Violet', unlocked:true, hex:'linear-gradient(145deg,#A78BFA,#7C3AED)'},
+    {name:'Gold', unlocked:false, hex:'linear-gradient(145deg,#E8C87A,#B8912F)'},
+  ],
+  'Banners': [
+    {name:'Ascension', unlocked:true, hex:'linear-gradient(145deg,#A78BFA,#22D3EE)'},
+    {name:'Wisdom', unlocked:true, hex:'linear-gradient(145deg,#818CF8,#34D399)'},
+  ],
+  'Sound Packs': [
+    {name:'Chime', unlocked:true, hex:'linear-gradient(145deg,#34D399,#065F46)'},
+    {name:'Arcade', unlocked:false, hex:'linear-gradient(145deg,#FBBF24,#92400E)'},
+  ],
+};
+let custCat = 'Hexagon Skins';
+let equipped = { 'Hexagon Skins':'Ascendant', 'Icons':'Classic', 'Themes':'Void', 'Frames':'Violet', 'Banners':'Ascension', 'Sound Packs':'Chime' };
+function renderCustomize(){
+  document.getElementById('cust-tabs').innerHTML = Object.keys(cosmeticCats).map(c=>
+    `<div class="cust-tab ${c===custCat?'active':''}" onclick="setCustCat('${c}')">${c}</div>`).join('');
+  document.getElementById('cust-grid').innerHTML = cosmeticCats[custCat].map(item=>`
+    <div class="glass cust-item ${equipped[custCat]===item.name?'selected':''}" style="opacity:${item.unlocked?1:0.4}" onclick="equipCosmetic('${item.name}', ${item.unlocked})">
+      ${equipped[custCat]===item.name?'<div class="equip-check">✓</div>':''}
+      ${!item.unlocked?'<div class="lock">🔒</div>':''}
+      <div class="cust-swatch" style="background:${item.hex}"></div>
+      <div class="cn">${item.name}</div>
+    </div>`).join('');
+}
+function setCustCat(c){ custCat = c; renderCustomize(); }
+function equipCosmetic(name, unlocked){
+  if(!unlocked){ showToast('Unlock at a higher rank'); return; }
+  equipped[custCat] = name;
+  renderCustomize();
+  showToast(name + ' equipped');
+  saveState();
+}
+
+/* ---- Apple Health ---- */
+const healthItems = [
+  {name:'Steps', icon:'👣', val:'8,412 today', on:true},
+  {name:'Calories', icon:'🔥', val:'2,140 kcal', on:true},
+  {name:'Workouts', icon:'🏋️', val:'4 this week', on:true},
+  {name:'Sleep', icon:'🌙', val:'7h 24m last night', on:true},
+  {name:'Heart Rate', icon:'❤️', val:'62 bpm resting', on:false},
+  {name:'Water Intake', icon:'💧', val:'1.8L today', on:true},
+];
+function renderHealth(){
+  document.getElementById('health-list').innerHTML = healthItems.map((h,i)=>`
+    <div class="glass health-row">
+      <div class="health-icon">${h.icon}</div>
+      <div class="health-info"><div class="health-name">${h.name}</div><div class="health-val">${h.val}</div></div>
+      <div class="toggle ${h.on?'on':''}" onclick="toggleHealth(${i})"><div class="knob"></div></div>
+    </div>`).join('');
+}
+function toggleHealth(i){
+  healthItems[i].on = !healthItems[i].on;
+  renderHealth();
+  showToast(healthItems[i].name + (healthItems[i].on?' synced':' paused'));
+}
+
+/* ---- Verification Center ---- */
+function honestyScore(){
+  const passCt = verifyEvents.filter(e=>e.type==='pass').length;
+  const failCt = verifyEvents.filter(e=>e.type==='fail').length;
+  const total = passCt + failCt;
+  return total ? Math.round((passCt/total)*100) : 100;
+}
+function renderHonestyRing(){
+  const score = honestyScore();
+  const r = 27, c = 2*Math.PI*r;
+  const svg = document.getElementById('honesty-ring');
+  svg.innerHTML = `
+    <circle cx="32" cy="32" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
+    <circle cx="32" cy="32" r="${r}" fill="none" stroke="${score>=80?'#34D399':score>=50?'#FBBF24':'#F87167'}" stroke-width="6" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${c - (c*score/100)}" transform="rotate(-90 32 32)"/>
+    <text x="32" y="37" text-anchor="middle" style="font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; fill:#F5F5F7;">${score}</text>
+  `;
+}
+function renderSources(){
+  const sources = [
+    { key:'health', name:'Apple Health', desc:healthSync.stepsToday.toLocaleString()+' steps synced today', on:healthSync.connected },
+    { key:'screentime', name:'Screen Time', desc:'Monitoring app activity across your device', on:screentimeConnected },
+    { key:'webshield', name:'Web Shield', desc:webShield.blockedToday+' distracting sites blocked today', on:webShield.connected },
+  ];
+  document.getElementById('sources-list').innerHTML = sources.map(s=>`
+    <div class="glass source-row">
+      <div class="source-dot ${s.on?'':'off'}"></div>
+      <div class="health-info"><div class="health-name">${s.name}</div><div class="health-val">${s.desc}</div></div>
+      <div class="toggle ${s.on?'on':''}" onclick="toggleSource('${s.key}')"><div class="knob"></div></div>
+    </div>`).join('');
+}
+function renderHealthConnectionPill(){
+  const el = document.getElementById('health-connection-pill');
+  if(!el) return;
+  el.textContent = healthSync.connected ? '🟢 Connected' : '⚪ Disconnected';
+  el.style.borderColor = healthSync.connected ? 'rgba(52,211,153,0.4)' : 'var(--border)';
+}
+function toggleSource(key){
+  if(key==='health') healthSync.connected = !healthSync.connected;
+  if(key==='screentime') screentimeConnected = !screentimeConnected;
+  if(key==='webshield') webShield.connected = !webShield.connected;
+  renderSources();
+  renderHealthConnectionPill();
+  const nowOn = {health:healthSync.connected, screentime:screentimeConnected, webshield:webShield.connected}[key];
+  const label = key==='health'?'Apple Health':key==='screentime'?'Screen Time':'Web Shield';
+  showToast(label + (nowOn ? ' reconnected' : ' disconnected — related quests will fail verification'));
+  saveState();
+}
+function renderAppActivity(){
+  const apps = [
+    {name:'TikTok', min:screenTime.tiktok, color:'#FB7185'},
+    {name:'Instagram', min:screenTime.instagram, color:'#E4A0F7'},
+    {name:'YouTube', min:screenTime.youtube, color:'#F87167'},
+    {name:'Safari', min:screenTime.safari, color:'#22D3EE'},
+  ];
+  const max = Math.max(...apps.map(a=>a.min), 1);
+  document.getElementById('app-activity').innerHTML = apps.map(a=>`
+    <div class="app-usage-row">
+      <div style="width:64px; font-size:11px; font-weight:500;">${a.name}</div>
+      <div class="app-usage-bar-track"><div class="app-usage-bar-fill" style="width:${(a.min/max)*100}%; background:${a.color};"></div></div>
+      <div style="width:38px; text-align:right; font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim);">${a.min}m</div>
+    </div>`).join('');
+}
+function renderVerifyEventsList(){
+  document.getElementById('verify-events').innerHTML = verifyEvents.slice(0,10).map(e=>`
+    <div class="event-row">
+      <div class="event-dot ${e.type}"></div>
+      <div>
+        <div class="event-text">${e.text}</div>
+        <div class="event-time">${e.time}</div>
+      </div>
+    </div>`).join('');
+}
+function renderVerifyCenter(){
+  renderHonestyRing();
+  renderSources();
+  renderAppActivity();
+  renderVerifyEventsList();
+}
+
+/* ---- Widgets ---- */
+function renderWidgets(){
+  document.getElementById('widget-small').innerHTML = `
+    <div class="glass" style="width:100%;height:100%;border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;">
+      <div style="font-size:20px;">🔥</div>
+      <div style="font-family:var(--font-mono); font-weight:700; font-size:18px;">${state.streak}</div>
+      <div style="font-size:8.5px; color:var(--text-faint);">day streak</div>
+    </div>`;
+  document.getElementById('widget-medium').innerHTML = `
+    <div class="glass" style="width:100%;height:100%;border-radius:20px; padding:12px; display:flex; flex-direction:column; justify-content:center; gap:6px;">
+      ${quests.slice(0,3).map(q=>`<div style="display:flex; align-items:center; gap:8px; font-size:10.5px;"><div style="width:12px;height:12px;border-radius:4px;background:${q.done?'var(--violet)':'transparent'};border:1.5px solid var(--border-strong);"></div>${q.name}</div>`).join('')}
+    </div>`;
+  const doneCt = quests.filter(q=>q.done).length;
+  const cx=45, cy=45, maxR=36;
+  const hexPts = statMeta.map((m,i)=>{ const a=(-90+i*ANGLE_STEP)*Math.PI/180; const r=maxR*(state.stats[m.key]/100); return (cx+r*Math.cos(a))+','+(cy+r*Math.sin(a)); }).join(' ');
+  document.getElementById('widget-large').innerHTML = `
+    <div class="glass" style="width:100%;height:100%;border-radius:20px; padding:16px; display:flex; align-items:center; gap:16px;">
+      <svg width="90" height="90" viewBox="0 0 90 90"><polygon points="${hexPts}" fill="rgba(167,139,250,0.35)" stroke="#A78BFA" stroke-width="1.5"/></svg>
+      <div>
+        <div style="font-family:var(--font-display); font-weight:700; font-size:20px;">Lvl ${state.level}</div>
+        <div style="font-size:10.5px; color:var(--text-dim); margin-bottom:6px;">${state.rank}</div>
+        <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint);">${doneCt}/${quests.length} quests today</div>
+      </div>
+    </div>`;
+}
+
+/* ---- Settings ---- */
+const settingsToggles = [
+  {name:'Motivational Notifications', on:true}, {name:'Streak Reminders', on:true},
+  {name:'Sound Effects', on:true}, {name:'Haptics', on:true}, {name:'Leaderboards', on:false}, {name:'Public Profile', on:true},
+];
+function renderSettings(){
+  document.getElementById('settings-body').innerHTML = `
+    <div class="section-title" style="margin-top:4px;">App &amp; Notifications</div>
+    <div class="glass card" style="margin-bottom:9px;">
+      <div class="row-between" style="margin-bottom:6px;">
+        <span class="small" style="font-weight:600;">Home Screen</span>
+        ${isStandalone() ? '<div class="installed-badge">✓ Installed</div>' : '<div class="pill" style="border-color:var(--border);">Not installed</div>'}
+      </div>
+      <div class="small muted" style="margin-bottom:${isStandalone()?'0':'10'}px;">
+        ${isStandalone() ? "You're running the installed app — full-screen and ready for notifications." : "Add Ascension to your Home Screen to unlock full-screen mode and notifications."}
+      </div>
+      ${isStandalone() ? '' : `<button class="begin-btn" style="margin-top:0; padding:11px;" onclick="showA2HS(true)">Show Install Instructions</button>`}
+    </div>
+    <div class="glass health-row">
+      <div class="health-info"><div class="health-name">Push Notifications</div><div class="health-val" id="notif-status">${notifStatusText()}</div></div>
+      <div class="toggle ${notifPermissionGranted()?'on':''}" onclick="toggleNotifications()"><div class="knob"></div></div>
+    </div>
+    ${notifPermissionGranted() ? `<div class="glass menu-row" onclick="sendTestNotification()"><div class="menu-icon">🔔</div><div class="menu-label">Send Test Notification</div></div>` : ''}
+    <div class="section-title">Preferences</div>
+    ${settingsToggles.map((s,i)=>`
+      <div class="glass health-row">
+        <div class="health-info"><div class="health-name">${s.name}</div></div>
+        <div class="toggle ${s.on?'on':''}" onclick="toggleSetting(${i})"><div class="knob"></div></div>
+      </div>`).join('')}
+    <div class="section-title">Account</div>
+    <div class="glass menu-row" onclick="editProfile()"><div class="menu-label">Edit Profile</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="closeOverlay('settings'); openOverlay('premium');"><div class="menu-label">Manage Subscription</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="showToast('Signed out')"><div class="menu-label" style="color:var(--danger);">Sign Out</div></div>
+  `;
+}
+function toggleSetting(i){ settingsToggles[i].on = !settingsToggles[i].on; renderSettings(); saveState(); }
+
+/* ---- Premium ---- */
+let premiumPlan = 'yearly';
+function renderPremium(){
+  document.getElementById('premium-body').innerHTML = `
+    <div class="glass card" style="text-align:center; padding:22px;">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:19px; margin-bottom:6px;">Unlock your full ascent</div>
+      <div class="small muted">Unlimited AI coaching, deep recovery insights, guild creation, and every cosmetic.</div>
+    </div>
+    <div class="segment" style="margin-top:16px;">
+      <button class="${premiumPlan==='monthly'?'active':''}" onclick="setPremiumPlan('monthly')">Monthly · $9.99</button>
+      <button class="${premiumPlan==='yearly'?'active':''}" onclick="setPremiumPlan('yearly')">Yearly · $59.99</button>
+    </div>
+    ${['Unlimited AI coaching','Advanced analytics','Unlimited custom quests','Guild creation','Exclusive cosmetics','Deep recovery insights','Cloud sync','Custom widgets'].map(f=>`
+      <div class="glass menu-row"><div class="menu-icon" style="background:rgba(167,139,250,0.15);">✓</div><div class="menu-label">${f}</div></div>`).join('')}
+    <button class="begin-btn" onclick="showToast('Welcome to Premium')">Start 7-Day Free Trial</button>
+  `;
+}
+function setPremiumPlan(p){ premiumPlan = p; renderPremium(); }
+
+/* ---- Stat detail modal (tap a hexagon vertex) ---- */
+const statTips = {
+  discipline:"Cold showers and no-doomscroll quests move this fastest — you already have both live today.",
+  body:"Add one more lift or run this week and Body overtakes Discipline.",
+  mind:"Journaling and meditation quests are the quickest wins here.",
+  social:"Post a milestone in the Commons — Encourage reactions nudge this stat too.",
+  wealth:"Log a saved-money win from a Recovery tracker to grow this.",
+  wisdom:"Finish today's reading quest — you're a few points from your best week.",
+  focus:"Your Deep Work Block quest is verified by Web Shield — clear it to push Focus past the others.",
+};
+function openStatModal(key){
+  const m = statMeta.find(m=>m.key===key);
+  const history = [state.stats[key]-14, state.stats[key]-9, state.stats[key]-6, state.stats[key]-3, state.stats[key]-1, state.stats[key]].map(v=>Math.max(4,v));
+  const max = Math.max(...history);
+  document.getElementById('stat-modal-content').innerHTML = `
+    <div class="grabber"></div>
+    <div class="row-between" style="margin-bottom:4px;">
+      <div style="display:flex; align-items:center; gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:${m.hex}"></div><span style="font-family:var(--font-display); font-weight:600; font-size:16px;">${m.label}</span></div>
+      <span style="font-family:var(--font-mono); font-size:20px; font-weight:700; color:${m.hex}">${state.stats[key]}</span>
+    </div>
+    <div class="small muted" style="margin-bottom:16px;">6-week trend</div>
+    <div class="sparkline" style="height:44px; margin-bottom:18px;">${history.map(v=>`<div class="spark-bar" style="height:${(v/max)*44}px; background:${m.hex};"></div>`).join('')}</div>
+    <div class="glass card" style="background:rgba(255,255,255,0.04);">
+      <div class="small" style="font-weight:600; margin-bottom:4px;">Mentor tip</div>
+      <div class="small muted">${statTips[key]}</div>
+    </div>
+  `;
+  document.getElementById('stat-modal-wrap').classList.add('open');
+}
+function closeStatModal(){ document.getElementById('stat-modal-wrap').classList.remove('open'); }
+
+/* ---- Breathing exercise (urge button) ---- */
+function openBreathe(){
+  document.getElementById('breathe-overlay').classList.add('open');
+  runBreathCycle();
+}
+function closeBreathe(){
+  document.getElementById('breathe-overlay').classList.remove('open');
+  clearTimeout(openBreathe._t);
+}
+function runBreathCycle(){
+  const circle = document.getElementById('breathe-circle');
+  const instr = document.getElementById('breathe-instruction');
+  function inhale(){
+    circle.classList.add('expand'); circle.textContent='Inhale'; instr.textContent='Breathe in for 4 seconds';
+    openBreathe._t = setTimeout(exhale, 4000);
+  }
+  function exhale(){
+    circle.classList.remove('expand'); circle.textContent='Exhale'; instr.textContent='Breathe out for 4 seconds';
+    openBreathe._t = setTimeout(inhale, 4000);
+  }
+  inhale();
+}
+
+/* ---- Guild chip select ---- */
+function toggleGuild(el){ el.classList.toggle('active'); }
+
+/* ---- Custom addiction ---- */
+function addCustomAddiction(){
+  const name = prompt('What do you want to track?');
+  if(!name) return;
+  addictions.push({ name, color:'var(--violet)', days:0, hours:0, saved:0, urges:0 });
+  renderRecovery();
+  showToast('Now tracking ' + name);
+}
+
+/* ---- Live quest reset countdown ---- */
+function tickQuestCountdown(){
+  const now = new Date();
+  const midnight = new Date(now); midnight.setHours(24,0,0,0);
+  const diff = midnight - now;
+  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
+  const el = document.getElementById('quest-reset-timer');
+  if(el) el.textContent = h+'h '+m+'m';
+}
+tickQuestCountdown(); setInterval(tickQuestCountdown, 30000);
+
+/* ---------------- CLOCK ---------------- */
+function tickClock(){
+  const d = new Date();
+  let h = d.getHours(); const m = d.getMinutes();
+  document.getElementById('clock').textContent = (h%12||12)+':'+String(m).padStart(2,'0');
+}
+tickClock(); setInterval(tickClock, 15000);
+
+/* ================= PWA: install detection & banner ================= */
+function isStandalone(){
+  return window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+}
+function isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+function isSafari(){
+  const ua = navigator.userAgent;
+  return /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+}
+function showA2HS(force){
+  const banner = document.getElementById('a2hs-banner');
+  if(!banner) return;
+  if(force){ banner.classList.add('show'); return; }
+  if(isIOS() && isSafari() && !isStandalone() && localStorage.getItem('a2hs_dismissed') !== '1'){
+    setTimeout(()=> banner.classList.add('show'), 1400);
+  }
+}
+function dismissA2HS(){
+  document.getElementById('a2hs-banner').classList.remove('show');
+  localStorage.setItem('a2hs_dismissed', '1');
+}
+
+/* ================= PWA: service worker + notifications ================= */
+function registerServiceWorker(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').catch(()=>{ /* fails silently e.g. on file:// */ });
+  }
+}
+function notifSupported(){
+  return 'Notification' in window && 'serviceWorker' in navigator;
+}
+function notifPermissionGranted(){
+  return notifSupported() && Notification.permission === 'granted';
+}
+function notifStatusText(){
+  if(!notifSupported()) return 'Not supported in this browser';
+  if(isIOS() && !isStandalone()) return 'Add to Home Screen first (iOS requirement)';
+  if(Notification.permission === 'granted') return 'Enabled — reminders will alert you';
+  if(Notification.permission === 'denied') return 'Blocked — enable in device Settings';
+  return 'Tap to enable streak & quest reminders';
+}
+async function toggleNotifications(){
+  if(!notifSupported()){ showToast('Notifications are not supported here'); return; }
+  if(isIOS() && !isStandalone()){ showToast('Add Ascension to your Home Screen first'); showA2HS(true); return; }
+  if(Notification.permission === 'granted'){
+    showToast('Notifications are enabled — manage them in device Settings to turn off');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  renderSettings();
+  if(perm === 'granted'){
+    showToast('Notifications enabled');
+    sendTestNotification(true);
+  } else {
+    showToast('Permission not granted');
+  }
+}
+async function sendTestNotification(isWelcome){
+  if(!notifPermissionGranted()) return;
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    reg.showNotification(isWelcome ? 'Welcome to Ascension' : 'Ascension', {
+      body: isWelcome ? "You'll get nudges like this to protect your streak." : "You're 1 quest away from protecting today's streak.",
+      icon: 'icons/icon-192.png',
+      badge: 'icons/icon-192.png',
+      tag: 'ascension-reminder'
+    });
+  }catch(e){
+    // Fallback for browsers without an active SW registration yet
+    try{ new Notification('Ascension', { body:'Test notification', icon:'icons/icon-192.png' }); }catch(e2){}
+  }
+  if(!isWelcome) showToast('Test notification sent');
+}
+
+/* ================= Local persistence ================= */
+function saveState(){
+  try{
+    const payload = {
+      state,
+      quests: quests.map(q=>({ id:q.id, done:q.done, status:q.status||null })),
+      resetSteps: resetSteps.map(s=>({ id:s.id, done:s.done })),
+      addictions: addictions.map(a=>({ name:a.name, days:a.days, hours:a.hours, saved:a.saved, urges:a.urges, watchApp:a.watchApp||null })),
+      dismissedFlags, equipped, settingsToggles,
+      healthConnected: healthSync.connected, screentimeConnected, webshieldConnected: webShield.connected,
+    };
+    localStorage.setItem('ascension_save', JSON.stringify(payload));
+  }catch(e){ /* storage unavailable — app still works, just won't persist */ }
+}
+function loadState(){
+  let saved;
+  try{ saved = JSON.parse(localStorage.getItem('ascension_save')); }catch(e){ saved = null; }
+  if(!saved) return;
+  try{
+    Object.assign(state, saved.state);
+    (saved.quests||[]).forEach(sq=>{
+      const q = quests.find(q=>q.id===sq.id);
+      if(q){ q.done = sq.done; q.status = sq.status; }
+    });
+    (saved.resetSteps||[]).forEach(ss=>{
+      const s = resetSteps.find(s=>s.id===ss.id);
+      if(s) s.done = ss.done;
+    });
+    if(saved.addictions){
+      saved.addictions.forEach(sa=>{
+        const a = addictions.find(a=>a.name===sa.name);
+        if(a){ a.days=sa.days; a.hours=sa.hours; a.saved=sa.saved; a.urges=sa.urges; }
+      });
+    }
+    if(saved.dismissedFlags) Object.assign(dismissedFlags, saved.dismissedFlags);
+    if(saved.equipped) Object.assign(equipped, saved.equipped);
+    if(saved.settingsToggles){
+      saved.settingsToggles.forEach((st,i)=>{ if(settingsToggles[i]) settingsToggles[i].on = st.on; });
+    }
+    if(typeof saved.healthConnected === 'boolean') healthSync.connected = saved.healthConnected;
+    if(typeof saved.screentimeConnected === 'boolean') screentimeConnected = saved.screentimeConnected;
+    if(typeof saved.webshieldConnected === 'boolean') webShield.connected = saved.webshieldConnected;
+  }catch(e){ /* ignore malformed save */ }
+}
+
+/* ---------------- INIT ---------------- */
+const rankTierColor = {
+  Wanderer:['#94a3b8','#475569'], Disciple:['#38bdf8','#0369a1'], Builder:['#34d399','#065f46'],
+  Warrior:['#A78BFA','#7C3AED'], Elite:['#f472b6','#9d174d'], Ascendant:['#fbbf24','#92400e'],
+  Paragon:['#f87171','#7f1d1d'], Transcendent:['#e8c87a','#78350f']
+};
+function updateRankShield(){
+  const c = rankTierColor[state.rank] || ['#A78BFA','#7C3AED'];
+  const shield = document.getElementById('rank-shield');
+  if(shield) shield.style.background = `linear-gradient(155deg, ${c[0]}, ${c[1]})`;
+  const label = document.getElementById('rank-label');
+  if(label) label.textContent = 'RANK · ' + state.rank.toUpperCase();
+}
+
+loadState();
+renderTopStats();
+updateRankShield();
+renderHealthConnectionPill();
+drawHexagon();
+renderQuests();
+renderReset();
+renderRecovery();
+renderCommons();
+renderProfile();
+typewrite(document.getElementById('mentor-text'), "<b>Your Body stat</b> climbed 12% this week. One more quest today locks in the streak.");
+registerServiceWorker();
+showA2HS(false);
+</script>
+</body>
+</html>
