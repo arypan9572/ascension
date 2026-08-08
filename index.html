@@ -540,11 +540,94 @@
     display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10px;
     padding:4px 9px; border-radius:100px; background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); color:var(--ok);
   }
+
+  /* ============ AUTH SCREEN ============ */
+  .auth-screen{
+    position:absolute; inset:0; z-index:200; background:var(--void);
+    display:flex; flex-direction:column; padding:max(50px, env(safe-area-inset-top)) 24px 30px 24px;
+    overflow-y:auto;
+  }
+  .auth-logo{ text-align:center; margin-bottom:26px; }
+  .auth-logo .mark{ width:40px; height:40px; margin:0 auto 12px auto; background:linear-gradient(145deg,var(--violet),var(--violet-deep)); clip-path:polygon(30% 0%, 100% 0%, 70% 100%, 0% 100%); box-shadow:0 0 20px var(--violet-glow); }
+  .auth-logo h1{ font-family:var(--font-display); font-size:20px; font-weight:700; letter-spacing:2px; }
+  .auth-logo p{ font-size:11.5px; color:var(--text-faint); margin-top:4px; }
+  .auth-tabs{ display:flex; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:3px; margin-bottom:20px; }
+  .auth-tab-btn{ flex:1; padding:10px; border-radius:8px; font-family:var(--font-mono); font-size:11.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-faint); }
+  .auth-tab-btn.active{ background:var(--surface-strong); color:var(--text); }
+  .auth-field label{ display:block; font-family:var(--font-mono); font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text-faint); margin-bottom:6px; }
+  .auth-field{ margin-bottom:14px; }
+  .auth-field input{
+    width:100%; padding:13px 14px; border-radius:9px; background:var(--surface); border:1px solid var(--border);
+    color:var(--text); font-family:var(--font-body); font-size:14px; outline:none;
+  }
+  .auth-field input:focus{ border-color:var(--violet); }
+  .avatar-picker{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+  .avatar-opt{
+    width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center;
+    font-size:20px; background:var(--surface); border:1.5px solid var(--border); cursor:pointer; overflow:hidden;
+    background-size:cover; background-position:center;
+  }
+  .avatar-opt.selected{ border-color:var(--violet); box-shadow:0 0 0 2px var(--violet-glow); }
+  .avatar-upload-btn{
+    width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center;
+    background:var(--surface); border:1.5px dashed var(--border-strong); color:var(--text-faint); font-size:16px; cursor:pointer;
+  }
+  .auth-error{ color:var(--danger); font-size:11.5px; margin-bottom:10px; min-height:14px; }
+  .auth-note{ font-size:10.5px; color:var(--text-faint); line-height:1.5; margin-top:16px; text-align:center; }
+  .auth-note a{ color:var(--violet); }
+  .existing-accounts{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .account-chip{
+    display:flex; align-items:center; gap:7px; padding:7px 12px 7px 7px; border-radius:100px;
+    background:var(--surface); border:1px solid var(--border); font-size:12px; font-weight:500;
+  }
+  .account-chip .ac-pfp{ width:22px; height:22px; border-radius:50%; background:var(--surface-strong); display:flex; align-items:center; justify-content:center; font-size:12px; background-size:cover; background-position:center; }
+  .pfp-img{ background-size:cover; background-position:center; }
+
+  /* ============ ROUTINES ============ */
+  .routine-card-home{ padding:16px; margin-bottom:6px; }
+  .routine-ring-row{ display:flex; align-items:center; gap:14px; }
+  .routine-tasks-mini{ flex:1; }
+  .routine-task-row{ display:flex; align-items:center; gap:8px; padding:5px 0; font-size:12px; }
+  .routine-task-row.done{ color:var(--text-faint); text-decoration:line-through; }
+  .req-tag{ font-family:var(--font-mono); font-size:8.5px; padding:2px 6px; border-radius:100px; letter-spacing:0.5px; }
+  .req-tag.required{ background:rgba(248,113,103,0.15); color:var(--danger); }
+  .req-tag.optional{ background:rgba(255,255,255,0.08); color:var(--text-faint); }
+  .routine-item{ padding:15px; margin-bottom:10px; }
+  .routine-item-head{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .routine-item-name{ font-family:var(--font-display); font-weight:700; font-size:14.5px; flex:1; }
+  .routine-task-edit-row{ display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--border); }
+  .routine-task-edit-row:last-child{ border-bottom:none; }
+  .task-x{ color:var(--text-faint); font-size:15px; padding:2px 6px; }
+
+  /* Alarm overlay */
+  .alarm-overlay{
+    position:absolute; inset:0; z-index:97; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 50% 40%, rgba(167,139,250,0.25), rgba(5,5,6,0.98) 75%);
+    opacity:0; pointer-events:none; transition:opacity .4s;
+  }
+  .alarm-overlay.open{ opacity:1; pointer-events:auto; }
+  .alarm-icon{ font-size:52px; margin-bottom:14px; animation:alarmShake 0.6s ease-in-out infinite; }
+  @keyframes alarmShake{ 0%,100%{ transform:rotate(0deg);} 25%{ transform:rotate(-8deg);} 75%{ transform:rotate(8deg);} }
+  .alarm-time{ font-family:var(--font-mono); font-size:38px; font-weight:700; margin-bottom:6px; }
+  .alarm-name{ font-family:var(--font-display); font-size:15px; color:var(--text-dim); margin-bottom:30px; }
+  .alarm-actions{ display:flex; gap:12px; width:100%; padding:0 30px; }
+  .alarm-actions button{ flex:1; padding:14px; border-radius:14px; font-family:var(--font-display); font-weight:700; font-size:13px; }
+  .alarm-snooze{ background:var(--surface-strong); border:1px solid var(--border-strong); }
+  .alarm-start{ background:linear-gradient(145deg,var(--violet),var(--violet-deep)); box-shadow:0 8px 24px var(--violet-glow); }
 </style>
 </head>
 <body>
 
 <div class="device" id="device">
+  <div class="auth-screen" id="auth-screen">
+    <div class="auth-logo">
+      <div class="mark"></div>
+      <h1>ASCENSION</h1>
+      <p>Become your highest self</p>
+    </div>
+    <div id="auth-body"></div>
+  </div>
+
   <div class="status-row"><span id="clock">9:41</span><span style="letter-spacing:1px;">●●●●  🔋</span></div>
 
   <div class="toast" id="toast">+20 XP</div>
@@ -591,27 +674,33 @@
     <div id="quest-groups" class="stagger"></div>
   </div>
 
-  <!-- RESET -->
-  <div class="screen hidden" id="screen-reset">
-    <div class="topbar"><div class="h1" style="margin:0;">Life Reset</div></div>
-    <div class="sub">A guided sequence to pull you out of a spiral.</div>
-    <div class="glass reset-hero">
-      <div class="reset-ring">
-        <svg width="120" height="120" viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
-          <circle id="reset-progress-ring" cx="60" cy="60" r="52" fill="none" stroke="url(#resetGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/>
-          <defs><linearGradient id="resetGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#A78BFA"/><stop offset="100%" stop-color="#7C3AED"/></linearGradient></defs>
-        </svg>
-        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-          <div style="font-family:var(--font-mono); font-size:20px; font-weight:600;" id="reset-count">0/10</div>
-          <div style="font-size:9.5px; color:var(--text-faint);">complete</div>
-        </div>
+  <!-- ROUTINES -->
+  <div class="screen hidden" id="screen-routines">
+    <div class="topbar"><div class="h1" style="margin:0;">Routines</div></div>
+    <div class="sub">Recurring checklists tied to your wake &amp; wind-down times. Required tasks protect your streak — optional ones don't.</div>
+    <button class="begin-btn" style="margin-bottom:16px;" onclick="openNewRoutinePicker()">+ New Routine</button>
+    <div id="routines-list" class="stagger"></div>
+  </div>
+
+  <!-- ROUTINE DETAIL / RUN -->
+  <div class="overlay" id="overlay-routine-detail">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('routine-detail')">‹</button><div class="overlay-title" id="routine-detail-title">Routine</div>
+      <div style="margin-left:auto; display:flex; gap:8px;">
+        <button class="back-btn" onclick="toggleRoutineEditMode()" id="routine-edit-btn">✎</button>
       </div>
-      <div class="h1" style="font-size:16px;">Reset Sequence</div>
-      <div class="sub" style="margin-bottom:0;">Move through each checkpoint at your pace.</div>
-      <button class="begin-btn" onclick="beginReset()">Begin Reset</button>
     </div>
-    <div id="reset-steps"></div>
+    <div class="overlay-body" id="routine-detail-body"></div>
+  </div>
+
+  <!-- ALARM -->
+  <div class="alarm-overlay" id="alarm-overlay">
+    <div class="alarm-icon">⏰</div>
+    <div class="alarm-time" id="alarm-time-display">7:00 AM</div>
+    <div class="alarm-name" id="alarm-name-display">Morning Routine</div>
+    <div class="alarm-actions">
+      <button class="alarm-snooze" onclick="snoozeAlarm()">Snooze 5m</button>
+      <button class="alarm-start" onclick="startAlarmRoutine()">Start Routine</button>
+    </div>
   </div>
 
   <!-- RECOVERY -->
@@ -647,6 +736,7 @@
     <div class="glass menu-row" onclick="openOverlay('ranks')"><div class="menu-icon">🏆</div><div class="menu-label">Level &amp; Ranks</div><div class="menu-chevron">›</div></div>
     <div class="glass menu-row" onclick="openOverlay('achievements')"><div class="menu-icon">🎖</div><div class="menu-label">Achievements</div><div class="menu-chevron">›</div></div>
     <div class="glass menu-row" onclick="openOverlay('verify')"><div class="menu-icon">🛰</div><div class="menu-label">Verification Center</div><div class="menu-chevron">›</div></div>
+    <div class="glass menu-row" onclick="openOverlay('friends')"><div class="menu-icon">🧑‍🤝‍🧑</div><div class="menu-label">Friends<span id="friend-req-badge"></span></div><div class="menu-chevron">›</div></div>
 
     <div class="section-title">Personalize</div>
     <div class="glass menu-row" onclick="openOverlay('customize')"><div class="menu-icon">🎨</div><div class="menu-label">Customization</div><div class="menu-chevron">›</div></div>
@@ -671,9 +761,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
       <span>Quests</span>
     </button>
-    <button class="nav-btn" data-tab="reset" onclick="goTo('reset')">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
-      <span>Reset</span>
+    <button class="nav-btn" data-tab="routines" onclick="goTo('routines')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8 14l2 2 4-4"/></svg>
+      <span>Routines</span>
     </button>
     <button class="nav-btn" data-tab="recovery" onclick="goTo('recovery')">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"/></svg>
@@ -728,7 +818,14 @@
         <div class="pill" id="health-connection-pill" style="cursor:pointer;" onclick="toggleSource('health')">🟢 Connected</div>
       </div>
       <div id="health-list"></div>
+      <div class="section-title">Fitness Apps</div>
+      <div id="fitness-apps-list"></div>
     </div>
+  </div>
+
+  <div class="overlay" id="overlay-fitness-info">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('fitness-info')">‹</button><div class="overlay-title">Fitness Apps</div></div>
+    <div class="overlay-body" id="fitness-info-body"></div>
   </div>
 
   <div class="overlay" id="overlay-widgets">
@@ -755,6 +852,23 @@
   <div class="overlay" id="overlay-premium">
     <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('premium')">‹</button><div class="overlay-title">Premium</div></div>
     <div class="overlay-body" id="premium-body"></div>
+  </div>
+
+  <div class="overlay" id="overlay-friends">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('friends')">‹</button><div class="overlay-title">Friends</div></div>
+    <div class="overlay-body">
+      <div class="auth-field"><input type="text" id="friend-search-input" placeholder="Search by username…" oninput="renderFriendSearch()"></div>
+      <div id="friend-search-results"></div>
+      <div class="section-title" style="margin-top:20px;">Requests</div>
+      <div id="friend-requests"></div>
+      <div class="section-title">Your Friends</div>
+      <div id="friends-list"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay-platform-info">
+    <div class="overlay-header"><button class="back-btn" onclick="closeOverlay('platform-info')">‹</button><div class="overlay-title">Platform Capabilities</div></div>
+    <div class="overlay-body" id="platform-info-body"></div>
   </div>
 
   <div class="overlay" id="overlay-verify">
@@ -820,6 +934,13 @@ const state = {
   stats: { discipline:72, body:65, mind:58, social:44, wealth:38, wisdom:61, focus:52 },
 };
 
+/* ---- Account / profile / goals / social globals ---- */
+let currentUser = null; // { username, pfp }
+let userProfile = { age:null, height:null, weight:null };
+let userGoals = { screenGoal:60, workoutGoal:4, disciplineGoal:3 };
+let friends = { accepted:[], incoming:[], outgoing:[] }; // arrays of usernames
+let equippedTheme = 'default';
+
 const statMeta = [
   { key:'discipline', label:'DISCIPLINE', color:'var(--discipline)', hex:'#9F7AEA' },
   { key:'body',       label:'BODY',       color:'var(--bodystat)',  hex:'#FB7185' },
@@ -852,10 +973,30 @@ let quests = [
   { id:9, name:'Clean Your Room', time:'EVENING', xp:10, coins:5, stat:'discipline', done:false, verifyMethod:null },
 ];
 
-let resetSteps = [
-  'Take a Shower','Open the Windows','Hydrate','Clean Your Room','Walk Outside',
-  'Quick Workout','Journal 5 Minutes','Stretch','Prepare a Healthy Meal','Wind Down for Sleep'
-].map((name,i)=>({ id:i, name, done:false }));
+let routines = [
+  { id:1, name:'Morning Routine', icon:'🌅', wakeTime:'07:00', enabled:true, alarmedDate:null, completedDate:null,
+    tasks:[
+      { id:1, name:'Wake Up', required:true, done:false },
+      { id:2, name:'Brush Teeth', required:true, done:false },
+      { id:3, name:'Shower', required:true, done:false },
+      { id:4, name:'Shave', required:false, done:false },
+      { id:5, name:'Eat Breakfast', required:true, done:false },
+      { id:6, name:'Take Vitamins', required:false, done:false },
+    ]},
+  { id:2, name:'Night Routine', icon:'🌙', wakeTime:'22:30', enabled:true, alarmedDate:null, completedDate:null,
+    tasks:[
+      { id:1, name:'Brush Teeth', required:true, done:false },
+      { id:2, name:'Wash Face', required:false, done:false },
+      { id:3, name:'Journal', required:false, done:false },
+      { id:4, name:'Lights Out', required:true, done:false },
+    ]},
+];
+const routineTemplates = {
+  'Morning Routine': ['Wake Up*','Brush Teeth*','Shower*','Shave','Eat Breakfast*','Take Vitamins'],
+  'Night Routine': ['Brush Teeth*','Wash Face','Journal','Lights Out*'],
+  'Life Reset': ['Take a Shower*','Open the Windows','Hydrate*','Clean Your Room','Walk Outside','Quick Workout','Journal 5 Minutes','Stretch','Prepare a Healthy Meal','Wind Down for Sleep*'],
+  'Blank Routine': ['First Task*'],
+};
 
 const addictions = [
   { name:'Nicotine', color:'var(--wealth)', days:41, hours:6, saved:287, urges:12, watchApp:null },
@@ -978,11 +1119,14 @@ function cycleMentor(){
 }
 
 function editProfile(){
-  const name = prompt('Choose a username:', state.username);
-  if(!name) return;
-  state.username = name.replace(/\s+/g,'').toLowerCase();
-  document.getElementById('avatar-big').textContent = state.username[0].toUpperCase();
-  document.getElementById('profile-sub').textContent = '@'+state.username+' · Ascending since Feb 2026';
+  if(!currentUser || currentUser.username==='guest'){ showToast('Guests can\'t edit a profile — create an account'); return; }
+  const newAvatar = prompt('New avatar (emoji), or leave blank to keep current:', currentUser.pfp && !currentUser.pfp.startsWith('data:') ? currentUser.pfp : '');
+  if(newAvatar){
+    currentUser.pfp = newAvatar;
+    const accounts = getAccounts();
+    if(accounts[currentUser.username]){ accounts[currentUser.username].pfp = newAvatar; saveAccounts(accounts); }
+    applyUserPfpToUI();
+  }
   closeOverlay('settings');
   showToast('Profile updated');
   saveState();
@@ -1199,31 +1343,198 @@ function renderQuests(){
   `).join('');
 }
 
-/* ---------------- RESET ---------------- */
-function renderReset(){
-  const done = resetSteps.filter(s=>s.done).length;
-  document.getElementById('reset-count').textContent = done+'/'+resetSteps.length;
-  const circumference = 326.7;
-  document.getElementById('reset-progress-ring').style.strokeDashoffset = circumference - (circumference*done/resetSteps.length);
-  document.getElementById('reset-steps').innerHTML = resetSteps.map(s=>`
-    <div class="glass step-item" onclick="toggleStep(${s.id})">
-      <div class="step-num ${s.done?'done':''}">${s.done? '✓' : s.id+1}</div>
-      <div class="step-name ${s.done?'done':''}">${s.name}</div>
+/* ---------------- ROUTINES ---------------- */
+let openRoutineId = null;
+let routineEditMode = false;
+
+function routineProgress(r){
+  const req = r.tasks.filter(t=>t.required);
+  const reqDone = req.filter(t=>t.done).length;
+  const allDone = r.tasks.filter(t=>t.done).length;
+  return { req: req.length, reqDone, total: r.tasks.length, allDone };
+}
+function fmtTime12(hhmm){
+  const [h,m] = hhmm.split(':').map(Number);
+  const period = h>=12 ? 'PM' : 'AM';
+  const h12 = h%12===0 ? 12 : h%12;
+  return h12+':'+String(m).padStart(2,'0')+' '+period;
+}
+function renderRoutines(){
+  document.getElementById('routines-list').innerHTML = routines.map(r=>{
+    const p = routineProgress(r);
+    return `
+    <div class="glass routine-item" onclick="openRoutineDetail(${r.id})">
+      <div class="routine-item-head">
+        <div style="font-size:20px;">${r.icon}</div>
+        <div class="routine-item-name">${r.name}</div>
+        <div class="toggle ${r.enabled?'on':''}" onclick="event.stopPropagation(); toggleRoutineEnabled(${r.id})"><div class="knob"></div></div>
+      </div>
+      <div class="small muted">⏰ ${fmtTime12(r.wakeTime)} · ${p.reqDone}/${p.req} required done · ${p.allDone}/${p.total} total</div>
+    </div>`;
+  }).join('');
+}
+
+function openNewRoutinePicker(){
+  const names = Object.keys(routineTemplates);
+  const choice = prompt('Start from a template:\n' + names.map((n,i)=>(i+1)+'. '+n).join('\n') + '\n\nType a number:');
+  const idx = parseInt(choice) - 1;
+  if(isNaN(idx) || !names[idx]) return;
+  const templateName = names[idx];
+  const tasks = routineTemplates[templateName].map((t,i)=>({ id:i+1, name:t.replace('*',''), required:t.endsWith('*'), done:false }));
+  const customName = prompt('Name this routine:', templateName) || templateName;
+  const newRoutine = { id: Date.now(), name: customName, icon:'✨', wakeTime:'08:00', enabled:true, alarmedDate:null, completedDate:null, tasks };
+  routines.push(newRoutine);
+  renderRoutines();
+  saveState();
+  showToast('Routine created');
+}
+
+function openRoutineDetail(id){
+  openRoutineId = id;
+  routineEditMode = false;
+  document.getElementById('routine-detail-title').textContent = routines.find(r=>r.id===id).name;
+  openOverlay('routine-detail');
+}
+function toggleRoutineEditMode(){
+  routineEditMode = !routineEditMode;
+  renderRoutineDetail();
+}
+function renderRoutineDetail(){
+  const r = routines.find(r=>r.id===openRoutineId);
+  if(!r) return;
+  document.getElementById('routine-detail-title').textContent = r.name;
+  const p = routineProgress(r);
+
+  let html = `
+    <div class="glass card" style="margin-bottom:14px;">
+      <div class="row-between" style="margin-bottom:10px;">
+        <span class="small" style="font-weight:600;">Wake / Trigger Time</span>
+        <input type="time" value="${r.wakeTime}" onchange="setRoutineTime(${r.id}, this.value)" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:6px 10px; font-family:var(--font-mono); font-size:12px;">
+      </div>
+      <div class="small muted">${p.reqDone}/${p.req} required tasks done today ${p.reqDone>=p.req && p.req>0 ? '· ✓ Complete!' : ''}</div>
+    </div>
+  `;
+
+  html += r.tasks.map(t => routineEditMode ? `
+    <div class="glass routine-task-edit-row" style="padding:12px; border-radius:9px; margin-bottom:8px; border-bottom:none;">
+      <span style="flex:1; font-size:12.5px;">${t.name}</span>
+      <div class="req-tag ${t.required?'required':'optional'}" style="cursor:pointer;" onclick="toggleTaskRequired(${r.id},${t.id})">${t.required?'REQUIRED':'OPTIONAL'}</div>
+      <div class="task-x" onclick="deleteRoutineTask(${r.id},${t.id})">✕</div>
+    </div>
+  ` : `
+    <div class="glass quest-card" style="margin-bottom:8px;">
+      <div class="quest-check ${t.done?'done':''}" onclick="toggleRoutineTask(${r.id},${t.id})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#050506" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div class="quest-info">
+        <div class="quest-name ${t.done?'done':''}">${t.name}</div>
+      </div>
+      <div class="req-tag ${t.required?'required':'optional'}">${t.required?'REQUIRED':'OPTIONAL'}</div>
     </div>
   `).join('');
+
+  if(routineEditMode){
+    html += `<div class="glass menu-row" onclick="addRoutineTask(${r.id})"><div class="menu-icon">＋</div><div class="menu-label">Add Task</div></div>`;
+    html += `<div class="glass menu-row" onclick="deleteRoutine(${r.id})"><div class="menu-icon" style="color:var(--danger);">🗑</div><div class="menu-label" style="color:var(--danger);">Delete Routine</div></div>`;
+  }
+
+  document.getElementById('routine-detail-body').innerHTML = html;
 }
-function toggleStep(id){
-  const s = resetSteps.find(s=>s.id===id);
-  s.done = !s.done;
-  if(s.done){ grantXP(8,2); showToast('Checkpoint complete'); }
-  renderReset();
+function setRoutineTime(id, val){
+  const r = routines.find(r=>r.id===id);
+  r.wakeTime = val;
+  renderRoutines();
+  saveState();
+  showToast('Alarm set for '+fmtTime12(val));
+}
+function toggleRoutineEnabled(id){
+  const r = routines.find(r=>r.id===id);
+  r.enabled = !r.enabled;
+  renderRoutines();
   saveState();
 }
-function beginReset(){
-  resetSteps.forEach(s=>s.done=false);
-  renderReset();
-  document.getElementById('reset-steps').scrollIntoView({behavior:'smooth'});
-  showToast('Reset sequence started');
+function toggleRoutineTask(rid, tid){
+  const r = routines.find(r=>r.id===rid);
+  const t = r.tasks.find(t=>t.id===tid);
+  t.done = !t.done;
+  if(t.done) grantXP(t.required?6:3, 2);
+  renderRoutineDetail();
+  renderRoutines();
+  const p = routineProgress(r);
+  if(t.done && p.reqDone >= p.req && p.req > 0 && r.completedDate !== todayStr()){
+    r.completedDate = todayStr();
+    grantXP(20, 8);
+    showToast('✓ '+r.name+' complete — bonus XP!');
+  }
+  saveState();
+}
+function toggleTaskRequired(rid, tid){
+  const t = routines.find(r=>r.id===rid).tasks.find(t=>t.id===tid);
+  t.required = !t.required;
+  renderRoutineDetail();
+  saveState();
+}
+function addRoutineTask(rid){
+  const name = prompt('Task name:');
+  if(!name) return;
+  const r = routines.find(r=>r.id===rid);
+  const nextId = Math.max(0, ...r.tasks.map(t=>t.id)) + 1;
+  r.tasks.push({ id:nextId, name, required:false, done:false });
+  renderRoutineDetail();
+  saveState();
+}
+function deleteRoutineTask(rid, tid){
+  const r = routines.find(r=>r.id===rid);
+  r.tasks = r.tasks.filter(t=>t.id!==tid);
+  renderRoutineDetail();
+  saveState();
+}
+function deleteRoutine(rid){
+  if(!confirm('Delete this routine?')) return;
+  routines = routines.filter(r=>r.id!==rid);
+  closeOverlay('routine-detail');
+  renderRoutines();
+  saveState();
+}
+
+/* ---- Alarm system ---- */
+function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function checkRoutineAlarms(){
+  const now = new Date();
+  const hhmm = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  routines.forEach(r=>{
+    if(r.enabled && r.wakeTime === hhmm && r.alarmedDate !== todayStr()){
+      r.alarmedDate = todayStr();
+      fireAlarm(r);
+      saveState();
+    }
+  });
+}
+function fireAlarm(r){
+  document.getElementById('alarm-time-display').textContent = fmtTime12(r.wakeTime);
+  document.getElementById('alarm-name-display').textContent = r.name;
+  document.getElementById('alarm-overlay').classList.add('open');
+  document.getElementById('alarm-overlay').dataset.routineId = r.id;
+  if(notifPermissionGranted()){
+    navigator.serviceWorker.ready.then(reg=>{
+      reg.showNotification('⏰ '+r.name, { body:"Time to start your routine.", icon:'icons/icon-192.png', tag:'ascension-alarm' });
+    }).catch(()=>{});
+  }
+}
+function snoozeAlarm(){
+  document.getElementById('alarm-overlay').classList.remove('open');
+  const rid = parseInt(document.getElementById('alarm-overlay').dataset.routineId);
+  setTimeout(()=>{ const r = routines.find(r=>r.id===rid); if(r) fireAlarm(r); }, 5*60*1000);
+  showToast('Snoozed for 5 minutes');
+}
+function startAlarmRoutine(){
+  const rid = parseInt(document.getElementById('alarm-overlay').dataset.routineId);
+  document.getElementById('alarm-overlay').classList.remove('open');
+  goTo('routines');
+  openRoutineDetail(rid);
+}
+function testAlarmNow(){
+  if(routines[0]) fireAlarm(routines[0]);
 }
 
 /* ---------------- RECOVERY ---------------- */
@@ -1276,6 +1587,7 @@ function renderRecovery(){
         <div class="stat-mini"><div class="v">A+</div><div class="l">Trend</div></div>
       </div>
       <button class="urge-btn" onclick="openBreathe()">⚠ I have an urge right now</button>
+      <button class="urge-btn" style="margin-top:8px; background:rgba(248,113,103,0.16); border-color:rgba(248,113,103,0.5);" onclick="logRelapseConfirm('${a.name}')">✕ I failed — log it</button>
     </div>
   `;}).join('') + `
     <div class="glass card" style="text-align:center; padding:20px; color:var(--text-faint); font-size:12.5px;" onclick="addCustomAddiction()">
@@ -1331,6 +1643,9 @@ function composePost(){
 /* ---------------- PROFILE ---------------- */
 function renderProfile(){
   document.getElementById('profile-title').textContent = state.rank + ' · Lvl ' + state.level;
+  const uname = currentUser ? currentUser.username : 'guest';
+  const ageBit = userProfile.age ? ', age '+userProfile.age : '';
+  document.getElementById('profile-sub').textContent = '@'+uname+ageBit;
   const week = [40,65,30,80,55,95,70];
   const days = ['M','T','W','T','F','S','S'];
   document.getElementById('week-chart').innerHTML = week.map((v,i)=>`
@@ -1352,6 +1667,9 @@ function openOverlay(name){
   if(name==='settings') renderSettings();
   if(name==='premium') renderPremium();
   if(name==='verify') renderVerifyCenter();
+  if(name==='routine-detail') renderRoutineDetail();
+  if(name==='friends') renderFriends();
+  if(name==='platform-info') renderPlatformInfo();
 }
 function closeOverlay(name){ document.getElementById('overlay-'+name).classList.remove('open'); }
 
@@ -1456,23 +1774,54 @@ const cosmeticCats = {
     {name:'Arcade', unlocked:false, hex:'linear-gradient(145deg,#FBBF24,#92400E)'},
   ],
 };
+const prestigeThemes = {
+  'Default':      { c1:'#A78BFA', c2:'#7C3AED', minLevel:0 },
+  'Naruto':       { c1:'#FB923C', c2:'#1D4ED8', minLevel:8 },
+  'Vagabond':     { c1:'#9CA3AF', c2:'#111827', minLevel:10 },
+  'Vinland Saga': { c1:'#7DD3FC', c2:'#1E3A5F', minLevel:12 },
+  'HxH':          { c1:'#4ADE80', c2:'#065F46', minLevel:14 },
+  'JJBA':         { c1:'#F472B6', c2:'#C08A00', minLevel:15 },
+  'The Climber':  { c1:'#E5E7EB', c2:'#4B5563', minLevel:18 },
+  'JJK':          { c1:'#8B5CF6', c2:'#1a0b2e', minLevel:20 },
+  'Berserk':      { c1:'#DC2626', c2:'#1a0000', minLevel:25 },
+};
+cosmeticCats['Prestige Themes'] = Object.keys(prestigeThemes).filter(n=>n!=='Default').map(n=>({
+  name:n, minLevel:prestigeThemes[n].minLevel, hex:`linear-gradient(145deg,${prestigeThemes[n].c1},${prestigeThemes[n].c2})`
+}));
+function applyTheme(name){
+  const t = prestigeThemes[name] || prestigeThemes['Default'];
+  document.documentElement.style.setProperty('--violet', t.c1);
+  document.documentElement.style.setProperty('--violet-deep', t.c2);
+  document.documentElement.style.setProperty('--violet-glow', t.c1+'59');
+  equippedTheme = name;
+}
 let custCat = 'Hexagon Skins';
-let equipped = { 'Hexagon Skins':'Ascendant', 'Icons':'Classic', 'Themes':'Void', 'Frames':'Violet', 'Banners':'Ascension', 'Sound Packs':'Chime' };
+let equipped = { 'Hexagon Skins':'Ascendant', 'Icons':'Classic', 'Themes':'Void', 'Frames':'Violet', 'Banners':'Ascension', 'Sound Packs':'Chime', 'Prestige Themes':'Default' };
+function isUnlocked(item){
+  if(item.minLevel !== undefined) return state.level >= item.minLevel;
+  return item.unlocked;
+}
 function renderCustomize(){
   document.getElementById('cust-tabs').innerHTML = Object.keys(cosmeticCats).map(c=>
     `<div class="cust-tab ${c===custCat?'active':''}" onclick="setCustCat('${c}')">${c}</div>`).join('');
-  document.getElementById('cust-grid').innerHTML = cosmeticCats[custCat].map(item=>`
-    <div class="glass cust-item ${equipped[custCat]===item.name?'selected':''}" style="opacity:${item.unlocked?1:0.4}" onclick="equipCosmetic('${item.name}', ${item.unlocked})">
+  const note = custCat==='Prestige Themes' ? `<div class="small muted" style="grid-column:1/-1; margin-bottom:2px;">Original palettes inspired by fan-favorite series — not licensed artwork. Unlocks by level.</div>` : '';
+  document.getElementById('cust-grid').innerHTML = note + cosmeticCats[custCat].map(item=>{
+    const unlocked = isUnlocked(item);
+    const lockLabel = item.minLevel ? `Lvl ${item.minLevel}` : '🔒';
+    return `
+    <div class="glass cust-item ${equipped[custCat]===item.name?'selected':''}" style="opacity:${unlocked?1:0.4}" onclick="equipCosmetic('${item.name}', ${unlocked})">
       ${equipped[custCat]===item.name?'<div class="equip-check">✓</div>':''}
-      ${!item.unlocked?'<div class="lock">🔒</div>':''}
+      ${!unlocked?`<div class="lock" style="font-family:var(--font-mono); font-size:8px;">${lockLabel}</div>`:''}
       <div class="cust-swatch" style="background:${item.hex}"></div>
       <div class="cn">${item.name}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 function setCustCat(c){ custCat = c; renderCustomize(); }
 function equipCosmetic(name, unlocked){
-  if(!unlocked){ showToast('Unlock at a higher rank'); return; }
+  if(!unlocked){ showToast('Unlock at a higher level'); return; }
   equipped[custCat] = name;
+  if(custCat === 'Prestige Themes') applyTheme(name);
   renderCustomize();
   showToast(name + ' equipped');
   saveState();
@@ -1494,7 +1843,43 @@ function renderHealth(){
       <div class="health-info"><div class="health-name">${h.name}</div><div class="health-val">${h.val}</div></div>
       <div class="toggle ${h.on?'on':''}" onclick="toggleHealth(${i})"><div class="knob"></div></div>
     </div>`).join('');
+  renderFitnessApps();
 }
+const fitnessApps = [
+  { key:'strava', name:'Strava', desc:'Runs & rides via Strava\'s public API', available:true, on:false },
+  { key:'fitbit', name:'Fitbit', desc:'Activity & heart rate via Fitbit Web API', available:true, on:false },
+  { key:'googlefit', name:'Google Fit', desc:'Cross-platform activity data', available:true, on:false },
+  { key:'lafitness', name:'LA Fitness', desc:'No public developer API exists', available:false, on:false },
+];
+function renderFitnessApps(){
+  document.getElementById('fitness-apps-list').innerHTML = fitnessApps.map((f,i)=>`
+    <div class="glass health-row" ${f.available?'':'style="opacity:0.55;"'}>
+      <div class="health-info"><div class="health-name">${f.name} ${!f.available?'<span onclick="openFitnessInfo(\''+f.key+'\')" style="cursor:pointer;">ⓘ</span>':''}</div><div class="health-val">${f.desc}</div></div>
+      ${f.available
+        ? `<div class="toggle ${f.on?'on':''}" onclick="toggleFitnessApp(${i})"><div class="knob"></div></div>`
+        : `<div class="pill" style="cursor:pointer;" onclick="openFitnessInfo('${f.key}')">Unavailable</div>`}
+    </div>`).join('');
+}
+function toggleFitnessApp(i){
+  fitnessApps[i].on = !fitnessApps[i].on;
+  renderFitnessApps();
+  showToast(fitnessApps[i].name + (fitnessApps[i].on ? ' connected (simulated)' : ' disconnected'));
+}
+function openFitnessInfo(key){
+  const f = fitnessApps.find(f=>f.key===key);
+  document.getElementById('fitness-info-body').innerHTML = `
+    <div class="glass card">
+      <div style="font-family:var(--font-display); font-weight:700; font-size:15px; margin-bottom:8px;">${f.name}</div>
+      <div class="small muted" style="line-height:1.6;">
+        ${key==='lafitness'
+          ? "LA Fitness doesn't publish a developer API — there's no way for any third-party app (including this one) to pull your check-ins or workouts directly from them. The realistic path is: LA Fitness workouts you log in <b>Apple Health</b> (via your Apple Watch or manually) can be read by apps that integrate with HealthKit — which itself requires a native iOS app, not a website. A web app has no route to LA Fitness data at all, direct or indirect."
+          : "This would connect via " + f.name + "'s public API (OAuth) once wired to a real backend — not included in this static build."}
+      </div>
+    </div>
+  `;
+  openOverlay('fitness-info');
+}
+
 function toggleHealth(i){
   healthItems[i].on = !healthItems[i].on;
   renderHealth();
@@ -1630,16 +2015,22 @@ function renderSettings(){
       <div class="toggle ${notifPermissionGranted()?'on':''}" onclick="toggleNotifications()"><div class="knob"></div></div>
     </div>
     ${notifPermissionGranted() ? `<div class="glass menu-row" onclick="sendTestNotification()"><div class="menu-icon">🔔</div><div class="menu-label">Send Test Notification</div></div>` : ''}
+    <div class="glass menu-row" onclick="openOverlay('platform-info')"><div class="menu-icon">ⓘ</div><div class="menu-label">Platform Capabilities</div><div class="menu-chevron">›</div></div>
     <div class="section-title">Preferences</div>
     ${settingsToggles.map((s,i)=>`
       <div class="glass health-row">
         <div class="health-info"><div class="health-name">${s.name}</div></div>
         <div class="toggle ${s.on?'on':''}" onclick="toggleSetting(${i})"><div class="knob"></div></div>
       </div>`).join('')}
+    <div class="section-title">Your Data</div>
+    <div class="glass menu-row" onclick="exportSave()"><div class="menu-icon">⬇</div><div class="menu-label">Export Save File</div></div>
+    <div class="glass menu-row" onclick="document.getElementById('import-save-input').click()"><div class="menu-icon">⬆</div><div class="menu-label">Import Save File</div></div>
+    <input type="file" id="import-save-input" accept="application/json" style="display:none;" onchange="importSave(event)">
+    <div class="small muted" style="padding:0 4px 4px 4px;">This is the practical stand-in for cloud sync on a static site — export a file, import it on another device. True automatic multi-device sync needs a backend.</div>
     <div class="section-title">Account</div>
     <div class="glass menu-row" onclick="editProfile()"><div class="menu-label">Edit Profile</div><div class="menu-chevron">›</div></div>
     <div class="glass menu-row" onclick="closeOverlay('settings'); openOverlay('premium');"><div class="menu-label">Manage Subscription</div><div class="menu-chevron">›</div></div>
-    <div class="glass menu-row" onclick="showToast('Signed out')"><div class="menu-label" style="color:var(--danger);">Sign Out</div></div>
+    <div class="glass menu-row" onclick="signOut()"><div class="menu-label" style="color:var(--danger);">Sign Out</div></div>
   `;
 }
 function toggleSetting(i){ settingsToggles[i].on = !settingsToggles[i].on; renderSettings(); saveState(); }
@@ -1728,6 +2119,338 @@ function addCustomAddiction(){
   renderRecovery();
   showToast('Now tracking ' + name);
 }
+function logRelapseConfirm(name){
+  if(confirm('Log a relapse for "'+name+'"? This resets the streak to Day 0 — no judgment, just honesty.')){
+    logRelapse(name);
+  }
+}
+
+/* ================= ACCOUNTS (device-local — see README for real backend options) ================= */
+function getAccounts(){ try{ return JSON.parse(localStorage.getItem('ascension_accounts')||'{}'); }catch(e){ return {}; } }
+function saveAccounts(obj){ localStorage.setItem('ascension_accounts', JSON.stringify(obj)); }
+function avatarStyle(pfp){ return pfp && pfp.startsWith('data:') ? `background-image:url(${pfp}); background-size:cover; background-position:center;` : ''; }
+function seedDemoAccounts(){
+  const accounts = getAccounts();
+  const seeds = { 'Mara_Ascends':'🛡', 'kenji.wisdom':'📚', 'quietstorm_':'🌙' };
+  let changed = false;
+  Object.keys(seeds).forEach(n=>{
+    if(!accounts[n]){ accounts[n] = { password:'demo', pfp:seeds[n], createdAt:Date.now(), incomingRequests:[] }; changed = true; }
+  });
+  if(changed) saveAccounts(accounts);
+}
+
+let authMode = 'landing';
+let signupData = { username:'', password:'', pfp:'👤', age:'', height:'', weight:'', screenGoal:60, workoutGoal:4, disciplineGoal:3 };
+let selectedAvatarValue = '👤';
+const avatarChoices = ['👤','🧑','🧔','👩','🥷','🧙','🦸','🐉'];
+
+function renderAuth(){
+  const body = document.getElementById('auth-body');
+  if(authMode==='landing'){
+    body.innerHTML = `
+      <div class="auth-note" style="margin-top:0; margin-bottom:22px;">Track quests, routines, and recovery — saved to this device.</div>
+      <button class="begin-btn" onclick="authMode='signup1'; renderAuth();">Create Account</button>
+      <button class="glass" style="width:100%; padding:14px; margin-top:10px; border-radius:9px; font-family:var(--font-display); font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:1px;" onclick="authMode='signin'; renderAuth();">Sign In</button>
+      <div class="auth-note">or <a onclick="continueAsGuest()" style="cursor:pointer;">continue as guest</a></div>
+      <div class="auth-note">Accounts are stored on this device only — not a secure server login. See README for how to add real multi-device accounts (Firebase/Supabase Auth).</div>
+    `;
+  } else if(authMode==='signin'){
+    const accounts = getAccounts();
+    const names = Object.keys(accounts);
+    body.innerHTML = `
+      ${names.length? `<div class="existing-accounts">${names.map(n=>`<div class="account-chip" onclick="quickFillSignin('${n}')"><div class="ac-pfp" style="${avatarStyle(accounts[n].pfp)}">${accounts[n].pfp && accounts[n].pfp.startsWith('data:')?'':accounts[n].pfp}</div>${n}</div>`).join('')}</div>`:''}
+      <div class="auth-field"><label>Username</label><input id="si-username" type="text" placeholder="username"></div>
+      <div class="auth-field"><label>Password</label><input id="si-password" type="password" placeholder="••••••••"></div>
+      <div class="auth-error" id="auth-err"></div>
+      <button class="begin-btn" onclick="doSignIn()">Sign In</button>
+      <div class="auth-note"><a onclick="authMode='landing'; renderAuth();" style="cursor:pointer;">‹ Back</a> · demo accounts use password "demo"</div>
+    `;
+  } else if(authMode==='signup1'){
+    body.innerHTML = `
+      <div class="auth-field"><label>Choose an avatar</label>
+        <div class="avatar-picker" id="avatar-picker">
+          ${avatarChoices.map(a=>`<div class="avatar-opt ${a===selectedAvatarValue?'selected':''}" data-av="${a}" onclick="selectAvatarOpt(this,'${a}')">${a}</div>`).join('')}
+          <div class="avatar-upload-btn" onclick="document.getElementById('pfp-upload').click()">📷</div>
+          <input type="file" id="pfp-upload" accept="image/*" style="display:none;" onchange="handlePfpUpload(event)">
+        </div>
+      </div>
+      <div class="auth-field"><label>Username</label><input id="su-username" type="text" placeholder="username" value="${signupData.username}"></div>
+      <div class="auth-field"><label>Password</label><input id="su-password" type="password" placeholder="••••••••" value="${signupData.password}"></div>
+      <div class="auth-error" id="auth-err"></div>
+      <button class="begin-btn" onclick="goSignupStep2()">Continue</button>
+      <div class="auth-note"><a onclick="authMode='landing'; renderAuth();" style="cursor:pointer;">‹ Back</a></div>
+    `;
+  } else if(authMode==='signup2'){
+    body.innerHTML = `
+      <div class="auth-note" style="margin-top:0;">A few basics for your profile — used to set starting goals, never shared.</div>
+      <div class="auth-field"><label>Age</label><input id="su-age" type="number" placeholder="25" value="${signupData.age}"></div>
+      <div class="auth-field"><label>Height (cm)</label><input id="su-height" type="number" placeholder="178" value="${signupData.height}"></div>
+      <div class="auth-field"><label>Weight (kg)</label><input id="su-weight" type="number" placeholder="75" value="${signupData.weight}"></div>
+      <button class="begin-btn" onclick="goSignupStep3()">Continue</button>
+      <div class="auth-note"><a onclick="authMode='signup1'; renderAuth();" style="cursor:pointer;">‹ Back</a></div>
+    `;
+  } else if(authMode==='signup3'){
+    body.innerHTML = `
+      <div class="auth-note" style="margin-top:0;">Set your starting goals — Ascension builds your first quests and routines around these.</div>
+      <div class="auth-field"><label>Screen time limit (minutes/day)</label><input id="su-screengoal" type="number" value="${signupData.screenGoal}"></div>
+      <div class="auth-field"><label>Workouts per week</label><input id="su-workoutgoal" type="number" value="${signupData.workoutGoal}"></div>
+      <div class="auth-field"><label>Quests per day (discipline goal)</label><input id="su-discgoal" type="number" value="${signupData.disciplineGoal}"></div>
+      <button class="begin-btn" onclick="goSignupStep4()">Continue</button>
+      <div class="auth-note"><a onclick="authMode='signup2'; renderAuth();" style="cursor:pointer;">‹ Back</a></div>
+    `;
+  } else if(authMode==='signup4'){
+    body.innerHTML = `
+      <div class="auth-note" style="margin-top:0;">Connect data sources — simulated in this build since iOS restricts Health &amp; Screen Time to native apps only. <a onclick="openPlatformInfo()" style="cursor:pointer;">Why? ⓘ</a></div>
+      <div class="glass health-row"><div class="health-info"><div class="health-name">Apple Health</div></div><div class="toggle on" id="su-src-health" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+      <div class="glass health-row"><div class="health-info"><div class="health-name">Screen Time</div></div><div class="toggle on" id="su-src-screentime" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+      <div class="glass health-row"><div class="health-info"><div class="health-name">Web Shield</div></div><div class="toggle on" id="su-src-webshield" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+      <button class="begin-btn" style="margin-top:16px;" onclick="finishSignup()">Enter Ascension</button>
+    `;
+  }
+}
+function selectAvatarOpt(el, a){
+  selectedAvatarValue = a;
+  document.querySelectorAll('.avatar-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function handlePfpUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    selectedAvatarValue = e.target.result; // data URL
+    showToast('Photo selected');
+  };
+  reader.readAsDataURL(file);
+}
+function quickFillSignin(name){
+  document.getElementById('si-username').value = name;
+  document.getElementById('si-password').focus();
+}
+function goSignupStep2(){
+  const u = document.getElementById('su-username').value.trim();
+  const p = document.getElementById('su-password').value;
+  const err = document.getElementById('auth-err');
+  if(!u || !p){ err.textContent = 'Enter a username and password'; return; }
+  if(getAccounts()[u]){ err.textContent = 'That username is taken'; return; }
+  signupData.username = u; signupData.password = p; signupData.pfp = selectedAvatarValue;
+  authMode = 'signup2'; renderAuth();
+}
+function goSignupStep3(){
+  signupData.age = document.getElementById('su-age').value;
+  signupData.height = document.getElementById('su-height').value;
+  signupData.weight = document.getElementById('su-weight').value;
+  authMode = 'signup3'; renderAuth();
+}
+function goSignupStep4(){
+  signupData.screenGoal = parseInt(document.getElementById('su-screengoal').value) || 60;
+  signupData.workoutGoal = parseInt(document.getElementById('su-workoutgoal').value) || 4;
+  signupData.disciplineGoal = parseInt(document.getElementById('su-discgoal').value) || 3;
+  authMode = 'signup4'; renderAuth();
+}
+function finishSignup(){
+  const accounts = getAccounts();
+  accounts[signupData.username] = {
+    password: signupData.password, pfp: signupData.pfp, createdAt: Date.now(), incomingRequests:[],
+    profile: { age:signupData.age, height:signupData.height, weight:signupData.weight },
+    goals: { screenGoal:signupData.screenGoal, workoutGoal:signupData.workoutGoal, disciplineGoal:signupData.disciplineGoal },
+    sourcesConnected: {
+      health: document.getElementById('su-src-health').classList.contains('on'),
+      screentime: document.getElementById('su-src-screentime').classList.contains('on'),
+      webshield: document.getElementById('su-src-webshield').classList.contains('on'),
+    }
+  };
+  saveAccounts(accounts);
+  logIn(signupData.username);
+  showToast('Welcome to Ascension, ' + signupData.username);
+}
+function doSignIn(){
+  const u = document.getElementById('si-username').value.trim();
+  const p = document.getElementById('si-password').value;
+  const accounts = getAccounts();
+  const err = document.getElementById('auth-err');
+  if(!accounts[u] || accounts[u].password !== p){ err.textContent = 'Incorrect username or password'; return; }
+  logIn(u);
+}
+function continueAsGuest(){ logIn(null); }
+function logIn(username){
+  const accounts = getAccounts();
+  if(username && accounts[username]){
+    const acc = accounts[username];
+    currentUser = { username, pfp: acc.pfp };
+    if(acc.profile) Object.assign(userProfile, acc.profile);
+    if(acc.goals) Object.assign(userGoals, acc.goals);
+    if(acc.sourcesConnected){
+      healthSync.connected = acc.sourcesConnected.health;
+      screentimeConnected = acc.sourcesConnected.screentime;
+      webShield.connected = acc.sourcesConnected.webshield;
+    }
+    localStorage.setItem('ascension_session', username);
+  } else {
+    currentUser = { username:'guest', pfp:'👤' };
+    localStorage.removeItem('ascension_session');
+  }
+  document.getElementById('auth-screen').style.display = 'none';
+  bootApp();
+}
+function signOut(){
+  if(!confirm('Sign out?')) return;
+  saveState();
+  localStorage.removeItem('ascension_session');
+  location.reload();
+}
+
+/* ================= FRIENDS (real for this device — see README for cross-device) ================= */
+function friendStatus(name){
+  if(friends.accepted.includes(name)) return 'friends';
+  if(friends.outgoing.includes(name)) return 'pending';
+  if(friends.incoming.includes(name)) return 'incoming';
+  return 'none';
+}
+function friendActionBtn(name, status){
+  if(status==='friends') return `<div class="pill">✓ Friends</div>`;
+  if(status==='pending') return `<div class="pill">Pending</div>`;
+  if(status==='incoming') return `<button class="begin-btn" style="width:auto; padding:8px 14px; margin:0;" onclick="acceptFriend('${name}')">Accept</button>`;
+  return `<button class="begin-btn" style="width:auto; padding:8px 14px; margin:0;" onclick="sendFriendRequest('${name}')">Add</button>`;
+}
+function renderFriendSearch(){
+  const input = document.getElementById('friend-search-input');
+  const q = input ? input.value.trim().toLowerCase() : '';
+  const results = document.getElementById('friend-search-results');
+  if(!q){ results.innerHTML = ''; return; }
+  const accounts = getAccounts();
+  const matches = Object.keys(accounts).filter(n=> n.toLowerCase().includes(q) && n!==currentUser.username);
+  results.innerHTML = matches.length ? matches.map(n=>{
+    const status = friendStatus(n);
+    const pfp = accounts[n].pfp;
+    return `<div class="glass menu-row"><div class="menu-icon" style="${avatarStyle(pfp)}">${pfp && pfp.startsWith('data:')?'':pfp}</div><div class="menu-label">${n}</div>${friendActionBtn(n,status)}</div>`;
+  }).join('') : '<div class="small muted" style="padding:8px 4px;">No matches</div>';
+}
+function sendFriendRequest(name){
+  if(!friends.outgoing.includes(name)) friends.outgoing.push(name);
+  const accounts = getAccounts();
+  if(accounts[name]){
+    accounts[name].incomingRequests = accounts[name].incomingRequests || [];
+    if(!accounts[name].incomingRequests.includes(currentUser.username)) accounts[name].incomingRequests.push(currentUser.username);
+    saveAccounts(accounts);
+  }
+  renderFriendSearch(); renderFriends();
+  showToast('Friend request sent to '+name);
+  saveState();
+}
+function acceptFriend(name){
+  friends.accepted.push(name);
+  friends.incoming = friends.incoming.filter(n=>n!==name);
+  renderFriends(); renderFriendSearch();
+  showToast('You are now friends with '+name);
+  saveState();
+}
+function removeFriend(name){
+  friends.accepted = friends.accepted.filter(n=>n!==name);
+  renderFriends();
+  saveState();
+}
+function renderFriends(){
+  const accounts = getAccounts();
+  const myAcc = accounts[currentUser.username];
+  if(myAcc && myAcc.incomingRequests){
+    myAcc.incomingRequests.forEach(n=>{ if(!friends.accepted.includes(n) && !friends.incoming.includes(n)) friends.incoming.push(n); });
+  }
+  document.getElementById('friend-requests').innerHTML = friends.incoming.length ? friends.incoming.map(n=>`
+    <div class="glass menu-row"><div class="menu-label">${n} wants to be friends</div><button class="begin-btn" style="width:auto; padding:8px 14px; margin:0;" onclick="acceptFriend('${n}')">Accept</button></div>
+  `).join('') : `<div class="small muted" style="padding:8px 4px;">No pending requests</div>`;
+  document.getElementById('friends-list').innerHTML = friends.accepted.length ? friends.accepted.map(n=>`
+    <div class="glass menu-row"><div class="menu-label">${n}</div><div class="menu-chevron" style="cursor:pointer; color:var(--danger); font-size:11px;" onclick="removeFriend('${n}')">Remove</div></div>
+  `).join('') : `<div class="small muted" style="padding:8px 4px;">No friends yet — search a username above.</div>`;
+  const badge = document.getElementById('friend-req-badge');
+  if(badge) badge.textContent = friends.incoming.length ? ' ('+friends.incoming.length+')' : '';
+}
+
+/* ================= PLATFORM HONESTY ================= */
+function openPlatformInfo(){ openOverlay('platform-info'); }
+function renderPlatformInfo(){
+  document.getElementById('platform-info-body').innerHTML = `
+    <div class="small muted" style="margin-bottom:16px; line-height:1.6;">Ascension is a web app (installable as a PWA). A few things people naturally expect from a fitness/discipline app are only possible from a native iOS app — here's exactly why, so nothing here overpromises.</div>
+    <div class="glass card" style="margin-bottom:10px;">
+      <div style="font-weight:700; margin-bottom:4px;">🩺 Apple Health</div>
+      <div class="small muted">HealthKit has no remote API — it's a local, on-device store. Only a native iOS app can request permission and read it. A website can't touch it, even installed to your Home Screen.</div>
+    </div>
+    <div class="glass card" style="margin-bottom:10px;">
+      <div style="font-weight:700; margin-bottom:4px;">📱 Screen Time</div>
+      <div class="small muted">Reading or managing Screen Time requires Apple's FamilyControls/DeviceActivity frameworks, which need a special entitlement Apple grants case-by-case to native apps only.</div>
+    </div>
+    <div class="glass card" style="margin-bottom:10px;">
+      <div style="font-weight:700; margin-bottom:4px;">🏆 Game Center</div>
+      <div class="small muted">GameKit (leaderboards, achievements, friends) is a native framework tied to an Xcode project and App Store listing — not reachable from a browser.</div>
+    </div>
+    <div class="glass card" style="margin-bottom:10px;">
+      <div style="font-weight:700; margin-bottom:4px;">▦ Home Screen Widgets</div>
+      <div class="small muted">Real iOS widgets (the kind on your actual Home Screen) are built with WidgetKit, a native app extension. What this app can do: add its own icon to your Home Screen via "Add to Home Screen" — that part is real.</div>
+    </div>
+    <div class="glass card">
+      <div style="font-weight:700; margin-bottom:4px;">What is real here</div>
+      <div class="small muted">Local push notifications, offline caching, Home Screen install, and everything you tap inside the app (quests, routines, recovery tracking, XP) — all fully functional. What's simulated is specifically the native-only data sources above; they use realistic mock data so you can see how the feature would behave.</div>
+    </div>
+  `;
+}
+
+/* ================= STREAK ROLLOVER + DAILY ANIMATIONS ================= */
+let pendingStreakAnim = null;
+function checkStreakRollover(lastActiveDate){
+  const today = todayStr();
+  if(!lastActiveDate || lastActiveDate === today) return;
+  const allQuestsDone = quests.length>0 && quests.every(q=>q.done);
+  const allRequiredRoutinesDone = routines.filter(r=>r.enabled).every(r=> r.tasks.filter(t=>t.required).every(t=>t.done) );
+  const success = allQuestsDone && allRequiredRoutinesDone;
+  pendingStreakAnim = success ? 'maintained' : 'broken';
+  if(success) state.streak += 1; else state.streak = 0;
+  quests.forEach(q=>{ q.done=false; q.status=null; });
+  routines.forEach(r=>{ r.tasks.forEach(t=>t.done=false); r.alarmedDate=null; r.completedDate=null; });
+}
+function playStreakAnim(){
+  if(!pendingStreakAnim) return;
+  const type = pendingStreakAnim; pendingStreakAnim = null;
+  const ov = document.getElementById('levelup-overlay');
+  document.getElementById('levelup-num').textContent = type==='maintained' ? '🔥' : '💔';
+  document.getElementById('levelup-particles').innerHTML = '';
+  const titleEl = document.querySelector('#levelup-overlay .levelup-title');
+  const subEl = document.getElementById('levelup-sub');
+  if(type==='maintained'){
+    titleEl.textContent = 'Streak Maintained';
+    subEl.textContent = state.streak + ' days and counting';
+  } else {
+    titleEl.textContent = 'Streak Broken';
+    subEl.textContent = "Back to day 0 — tomorrow's a clean restart";
+  }
+  ov.classList.add('open');
+  setTimeout(()=> ov.classList.remove('open'), 2600);
+}
+
+/* ================= DOOMSCROLL SHAME CHECK ================= */
+function checkDoomscrollShame(){
+  const total = screenTime.tiktok + screenTime.instagram + screenTime.youtube;
+  if(total > userGoals.screenGoal){
+    setTimeout(()=>{
+      showShameModal(total);
+      if(notifPermissionGranted()){
+        navigator.serviceWorker.ready.then(reg=>{
+          reg.showNotification('😞 Ascension', { body:`You logged ${total} min on social apps yesterday — over your ${userGoals.screenGoal} min goal.`, icon:'icons/icon-192.png' });
+        }).catch(()=>{});
+      }
+    }, pendingStreakAnim ? 3000 : 1200);
+  }
+}
+function showShameModal(total){
+  document.getElementById('stat-modal-content').innerHTML = `
+    <div class="grabber"></div>
+    <div style="text-align:center; padding:6px 0 16px 0;">
+      <div style="font-size:44px; margin-bottom:10px;">🙁</div>
+      <div style="font-family:var(--font-display); font-weight:700; font-size:16px; margin-bottom:6px;">You slipped up</div>
+      <div class="small muted">${total} minutes on TikTok/Instagram/YouTube — over your ${userGoals.screenGoal}-minute goal. No shame spiral, just noting it. Tomorrow's a clean slate.</div>
+    </div>
+  `;
+  document.getElementById('stat-modal-wrap').classList.add('open');
+}
 
 /* ---- Live quest reset countdown ---- */
 function tickQuestCountdown(){
@@ -1744,7 +2467,8 @@ tickQuestCountdown(); setInterval(tickQuestCountdown, 30000);
 function tickClock(){
   const d = new Date();
   let h = d.getHours(); const m = d.getMinutes();
-  document.getElementById('clock').textContent = (h%12||12)+':'+String(m).padStart(2,'0');
+  const clockEl = document.getElementById('clock');
+  if(clockEl) clockEl.textContent = (h%12||12)+':'+String(m).padStart(2,'0');
 }
 tickClock(); setInterval(tickClock, 15000);
 
@@ -1824,23 +2548,25 @@ async function sendTestNotification(isWelcome){
   if(!isWelcome) showToast('Test notification sent');
 }
 
-/* ================= Local persistence ================= */
+/* ================= Local persistence (per account) ================= */
+function saveKey(){ return 'ascension_save_' + (currentUser ? currentUser.username : 'guest'); }
 function saveState(){
   try{
     const payload = {
       state,
       quests: quests.map(q=>({ id:q.id, done:q.done, status:q.status||null })),
-      resetSteps: resetSteps.map(s=>({ id:s.id, done:s.done })),
+      routines: routines.map(r=>({ id:r.id, name:r.name, icon:r.icon, wakeTime:r.wakeTime, enabled:r.enabled, alarmedDate:r.alarmedDate, completedDate:r.completedDate, tasks:r.tasks.map(t=>({id:t.id,name:t.name,required:t.required,done:t.done})) })),
       addictions: addictions.map(a=>({ name:a.name, days:a.days, hours:a.hours, saved:a.saved, urges:a.urges, watchApp:a.watchApp||null })),
       dismissedFlags, equipped, settingsToggles,
       healthConnected: healthSync.connected, screentimeConnected, webshieldConnected: webShield.connected,
+      userProfile, userGoals, friends, lastActiveDate: todayStr(), equippedTheme,
     };
-    localStorage.setItem('ascension_save', JSON.stringify(payload));
+    localStorage.setItem(saveKey(), JSON.stringify(payload));
   }catch(e){ /* storage unavailable — app still works, just won't persist */ }
 }
 function loadState(){
   let saved;
-  try{ saved = JSON.parse(localStorage.getItem('ascension_save')); }catch(e){ saved = null; }
+  try{ saved = JSON.parse(localStorage.getItem(saveKey())); }catch(e){ saved = null; }
   if(!saved) return;
   try{
     Object.assign(state, saved.state);
@@ -1848,10 +2574,7 @@ function loadState(){
       const q = quests.find(q=>q.id===sq.id);
       if(q){ q.done = sq.done; q.status = sq.status; }
     });
-    (saved.resetSteps||[]).forEach(ss=>{
-      const s = resetSteps.find(s=>s.id===ss.id);
-      if(s) s.done = ss.done;
-    });
+    if(saved.routines && saved.routines.length) routines = saved.routines;
     if(saved.addictions){
       saved.addictions.forEach(sa=>{
         const a = addictions.find(a=>a.name===sa.name);
@@ -1866,7 +2589,38 @@ function loadState(){
     if(typeof saved.healthConnected === 'boolean') healthSync.connected = saved.healthConnected;
     if(typeof saved.screentimeConnected === 'boolean') screentimeConnected = saved.screentimeConnected;
     if(typeof saved.webshieldConnected === 'boolean') webShield.connected = saved.webshieldConnected;
+    if(saved.userProfile) Object.assign(userProfile, saved.userProfile);
+    if(saved.userGoals) Object.assign(userGoals, saved.userGoals);
+    if(saved.friends) friends = saved.friends;
+    if(saved.equippedTheme) equippedTheme = saved.equippedTheme;
+    checkStreakRollover(saved.lastActiveDate);
   }catch(e){ /* ignore malformed save */ }
+}
+
+/* Export / Import — the practical stand-in for "cloud sync" on a static site */
+function exportSave(){
+  saveState();
+  const blob = new Blob([localStorage.getItem(saveKey())], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ascension-save-'+(currentUser?currentUser.username:'guest')+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Save file downloaded');
+}
+function importSave(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    try{
+      JSON.parse(e.target.result); // validate
+      localStorage.setItem(saveKey(), e.target.result);
+      showToast('Save imported — reloading');
+      setTimeout(()=>location.reload(), 800);
+    }catch(err){ showToast('Invalid save file'); }
+  };
+  reader.readAsText(file);
 }
 
 /* ---------------- INIT ---------------- */
@@ -1882,20 +2636,53 @@ function updateRankShield(){
   const label = document.getElementById('rank-label');
   if(label) label.textContent = 'RANK · ' + state.rank.toUpperCase();
 }
+function applyUserPfpToUI(){
+  const el = document.getElementById('avatar-big');
+  if(!el || !currentUser) return;
+  if(currentUser.pfp && currentUser.pfp.startsWith('data:')){
+    el.style.backgroundImage = `url(${currentUser.pfp})`;
+    el.classList.add('pfp-img');
+    el.textContent = '';
+  } else {
+    el.style.backgroundImage = '';
+    el.classList.remove('pfp-img');
+    el.textContent = currentUser.pfp || (currentUser.username[0]||'?').toUpperCase();
+  }
+}
 
-loadState();
-renderTopStats();
-updateRankShield();
-renderHealthConnectionPill();
-drawHexagon();
-renderQuests();
-renderReset();
-renderRecovery();
-renderCommons();
-renderProfile();
-typewrite(document.getElementById('mentor-text'), "<b>Your Body stat</b> climbed 12% this week. One more quest today locks in the streak.");
+function bootApp(){
+  loadState();               // includes checkStreakRollover against the previous session's date
+  applyTheme(equippedTheme);
+  renderTopStats();
+  updateRankShield();
+  renderHealthConnectionPill();
+  applyUserPfpToUI();
+  drawHexagon();
+  renderQuests();
+  renderRoutines();
+  renderRecovery();
+  renderCommons();
+  renderProfile();
+  typewrite(document.getElementById('mentor-text'), "<b>Your Body stat</b> climbed 12% this week. One more quest today locks in the streak.");
+
+  playStreakAnim();
+  checkDoomscrollShame();
+  checkRoutineAlarms();
+  setInterval(checkRoutineAlarms, 30000);
+  saveState();
+}
+
 registerServiceWorker();
 showA2HS(false);
+seedDemoAccounts();
+
+const existingSession = localStorage.getItem('ascension_session');
+if(existingSession && getAccounts()[existingSession]){
+  logIn(existingSession); // skips the auth screen straight into bootApp()
+} else {
+  document.getElementById('auth-screen').style.display = 'flex';
+  renderAuth();
+}
 </script>
 </body>
 </html>

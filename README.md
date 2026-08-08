@@ -1,76 +1,117 @@
 # Ascension
 
-An RPG for your real life — quests, an evolving 7-stat life graph, a verified
-honesty system, and addiction recovery. Installable as an iOS/Android home
-screen app (PWA).
+An RPG for your real life — quests, routines, a 7-stat life graph, a
+verified honesty system, addiction recovery, and a local social layer.
+Installable as an iOS/Android Home Screen app (PWA).
 
 ## Files
 
 ```
-index.html        the whole app (single file, self-contained)
-manifest.json      PWA manifest — name, icons, theme color, standalone display
-sw.js               service worker — offline caching + local notifications
-icons/              app icon set (16px favicon up to 1024px)
+index.html      the whole app (single file, self-contained)
+manifest.json   PWA manifest — name, icons, standalone display
+sw.js           service worker — offline caching + local notifications
+icons/          app icon set (16px favicon up to 1024px)
 ```
 
 ## Deploy to GitHub Pages (2 minutes)
 
 1. Create a new GitHub repo and upload all the files above, keeping the
    folder structure (`icons/` must stay a subfolder next to `index.html`).
-2. In the repo, go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to `Deploy from a branch`,
-   branch `main`, folder `/ (root)`. Save.
-4. GitHub gives you a URL like `https://yourname.github.io/your-repo/`.
-   Open it — that's your live app.
+2. Repo → **Settings → Pages** → Source: `Deploy from a branch`, branch
+   `main`, folder `/ (root)`. Save.
+3. GitHub gives you a URL like `https://yourname.github.io/your-repo/`.
+   That's your live app. No build step, no server.
 
-That's it. No build step, no server, no dependencies — it's a static site.
+## Add it to your iPhone Home Screen
 
-## Adding it to your iPhone Home Screen
+Open the URL in **Safari** (must be Safari) → tap **Share** → **Add to
+Home Screen** → **Add**. The app also detects this itself and shows an
+in-app banner with these steps if you haven't installed it yet. Once
+opened from the Home Screen it runs full-screen and unlocks notifications.
 
-1. Open the GitHub Pages URL in **Safari** (must be Safari, not Chrome —
-   iOS only allows installing from Safari).
-2. Tap the **Share** icon in the toolbar.
-3. Scroll down and tap **Add to Home Screen**.
-4. Tap **Add**.
+## What's new in this build
 
-The app also detects this itself: if it notices you're on iOS Safari and
-haven't installed it yet, it shows an in-app banner with these same steps.
-Once it's on your Home Screen and you open it from there, it runs
-full-screen (no browser bar) and unlocks notifications.
+- **Accounts** — real sign-up/sign-in flow with a custom username, an
+  avatar (pick an emoji or upload a photo), and an onboarding wizard that
+  collects age/height/weight and starting goals (screen time limit,
+  workouts/week, quests/day). Three demo accounts are pre-seeded
+  (`Mara_Ascends`, `kenji.wisdom`, `quietstorm_`, password `demo`) so
+  friending has someone to test against immediately.
+- **Routines replace Reset** — Life Reset is now just one of several
+  routine templates. Build routines (Morning, Night, custom) with tasks
+  marked **required** or **optional** — required tasks protect your
+  streak, optional ones don't. Each routine has a wake/trigger time; when
+  the clock hits it, an alarm screen fires (with Snooze / Start Routine)
+  plus a real notification if you've granted permission.
+- **Streak Maintained / Streak Broken animations** — the app tracks the
+  real date. On the first open of a new day, it checks whether yesterday's
+  required quests and routine tasks were finished and plays a genuine
+  streak-maintained or streak-broken animation before resetting the daily
+  checklist.
+- **Doomscroll shame check** — on open, if yesterday's mock screen time
+  exceeds your goal, you get a small "you slipped up" moment (with a
+  notification) instead of it just silently passing.
+- **Recovery "I Failed" button** — sits next to the urge button; logs an
+  explicit relapse with confirmation and resets that tracker's streak.
+- **Friends** — search by username, send/accept requests, remove friends.
+  Real for this device (works against the seeded accounts or any account
+  created on the same browser); see the limitation note below for
+  cross-device.
+- **Prestige Themes** — original color-palette themes (not licensed
+  artwork) inspired by Naruto, Vagabond, Vinland Saga, HxH, JoJo, The
+  Climber, JJK, and Berserk, unlocked at increasing levels and equippable
+  from Customization. Equipping one re-skins the app's accent color.
+- **Export / Import save** — the practical stand-in for cloud sync on a
+  static site: download a JSON save file, import it on another device.
 
-## Notifications — what actually works here
+## Notifications
 
-- **Local notifications work today.** In Settings → Push Notifications,
-  tapping the toggle asks for permission, then the app can show real
-  notifications (via the service worker) while it's open or recently
-  backgrounded — e.g. the "Send Test Notification" button.
-- **iOS requirement:** notifications only work once the app has been added
-  to the Home Screen and opened from there (iOS 16.4+). If you try to
-  enable them from a regular Safari tab, the app will tell you to install
-  it first.
-- **What's *not* included:** true scheduled/server-sent push — a reminder
-  that arrives tomorrow morning even if you never opened the app — needs a
-  backend that sends Web Push messages (VAPID keys, a subscription
-  endpoint, something to trigger the send on a schedule). This is a static
-  site with no server, so that part isn't wired up. The service worker
-  (`sw.js`) already has the `notificationclick` handler ready for it — you'd
-  add a `push` event listener and a small backend (a Vercel/Cloudflare
-  function, or a service like OneSignal) to complete it.
+Settings → Push Notifications requests real permission and can fire real
+notifications via the service worker — quest reminders, routine alarms,
+doomscroll call-outs — while the app is open or recently backgrounded
+(the limit iOS itself imposes on PWAs). True scheduled push that arrives
+with the app fully closed needs a backend (VAPID keys, a subscription
+endpoint, something to trigger sends on a schedule) — not included in
+this static site. `sw.js` already has the `notificationclick` handler
+ready for it.
 
-## Data & progress
+## What's real vs. simulated — read this before you assume something works
 
-Your quests, XP, streak, cosmetics, and settings are saved to
-`localStorage` on the device, so progress survives closing and reopening
-the app. It's per-device/per-browser — there's no account system or cloud
-sync in this build.
+This is a fully interactive front-end; every button, quest, toggle, and
+routine is real code, not a mockup. What it can't do, because no website
+can:
 
-## What's a prototype vs. real here
+- **Apple Health / HealthKit** — no remote API exists; only a native iOS
+  app can read it.
+- **Screen Time** — reading or managing it requires Apple's
+  FamilyControls/DeviceActivity frameworks, which need a special
+  entitlement Apple only grants to native apps.
+- **Game Center** — GameKit is a native framework tied to an Xcode
+  project and App Store listing.
+- **Real iOS Home Screen widgets** — those need WidgetKit, a native app
+  extension. This app can add its own *icon* to your Home Screen (that
+  part is real); it can't add a WidgetKit widget.
+- **LA Fitness** — has no public developer API at all, so no app
+  (including native ones) can pull check-ins from them directly.
 
-This is a fully interactive front-end — every button, quest, and toggle
-does something real (the code is functional, not a mockup). What it's
-*not* is a backend: there's no server, no real Apple Health/Screen Time
-API access, and no database. Where the app "checks" your workout or app
-activity, it's checking realistic mock data to demonstrate how the
-verification system would behave — wiring it to real HealthKit/Screen
-Time APIs requires a native iOS shell (Swift/SwiftUI or Capacitor/React
-Native), since those APIs aren't available to plain web apps.
+Everywhere the app "connects" to one of these, it's using realistic mock
+data so you can see how the feature would behave. There's a full,
+plain-language breakdown of this in-app: **Settings → Platform
+Capabilities**.
+
+Getting the real versions of any of the above requires wrapping this (or
+rebuilding the relevant parts) as a native iOS app in Swift/SwiftUI, or a
+hybrid shell like Capacitor/React Native, since those APIs simply aren't
+exposed to web apps, PWAs, or App-Store-wrapped web views.
+
+## Accounts, data, and privacy — the honest version
+
+Accounts and all progress are stored in `localStorage` on the device —
+there is no server, no password hashing, no real authentication. This is
+a real, working system for a single device, and completely wrong to rely
+on as if it were secure production auth. For actual multi-device accounts
+with proper password security, the practical path is adding **Firebase
+Authentication** or **Supabase Auth** (both have generous free tiers and
+work from a static site with just their client SDK + your own project
+keys — no backend server to run yourself). That's a genuine next step,
+not implemented here since it needs your own project credentials.
