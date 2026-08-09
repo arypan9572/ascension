@@ -31,12 +31,38 @@ opened from the Home Screen it runs full-screen and unlocks notifications.
 
 ## What's new in this build
 
-- **Accounts** — real sign-up/sign-in flow with a custom username, an
-  avatar (pick an emoji or upload a photo), and an onboarding wizard that
-  collects age/height/weight and starting goals (screen time limit,
-  workouts/week, quests/day). Three demo accounts are pre-seeded
-  (`Mara_Ascends`, `kenji.wisdom`, `quietstorm_`, password `demo`) so
-  friending has someone to test against immediately.
+- **Custom animation engines** — three effects adapted from a set of React
+  reference components into plain JS (no build step needed):
+  - **Fold-text reveal** — letters hinge-fold into place, 3D-flip style, on
+    the "ASCENSION" wordmark at startup and on the Level-Up / Streak
+    Maintained / Streak Broken overlays.
+  - **Pixel-dissolve reveal** — a small canvas-based effect that
+    materializes in pixel blocks, plays when a quest completes and when
+    the Achievements screen opens (staggered across unlocked badges).
+  - **Scroll-wheel picker** — a physics-based (exponential easing,
+    drag/wheel/keyboard support) scrolling picker, replacing plain
+    `<input>` controls for wake/wind-down time selection (onboarding +
+    Routines) and the 7 stat self-rating sliders in onboarding.
+- **Unit toggles** — height switches between cm and ft/in, weight between kg
+  and lbs, right in the sign-up flow.
+- **Real onboarding personalization** — a dedicated step asks what you want
+  to work on (doomscrolling, nicotine, alcohol, etc.), your wake/wind-down
+  times, and has you self-rate all 7 stats with sliders. Finishing sign-up
+  actually builds your starting heptagon from those ratings, generates your
+  Morning/Night routines around your chosen times, seeds your first quests
+  from your goals, and creates a Recovery tracker for each thing you picked.
+  Nothing about it is cosmetic — it's real starting data.
+- **Real Apple Health data import** — Settings → Apple Health has an
+  "Import your real Health data" card. Export your data from the iPhone
+  Health app (profile icon → Export All Health Data), upload the .zip or
+  .xml here, and the app parses your actual step counts and workouts
+  client-side (via JSZip + a regex scan — no data ever leaves the device)
+  and replaces the mock numbers with real ones. This is the one integration
+  in this build that isn't simulated.
+- **Accounts** — real sign-up/sign-in flow with a custom username and an
+  avatar (pick an emoji or upload a photo). Three demo accounts are
+  pre-seeded (`Mara_Ascends`, `kenji.wisdom`, `quietstorm_`, password
+  `demo`) so friending has someone to test against immediately.
 - **Routines replace Reset** — Life Reset is now just one of several
   routine templates. Build routines (Morning, Night, custom) with tasks
   marked **required** or **optional** — required tasks protect your
@@ -82,10 +108,16 @@ routine is real code, not a mockup. What it can't do, because no website
 can:
 
 - **Apple Health / HealthKit** — no remote API exists; only a native iOS
-  app can read it.
-- **Screen Time** — reading or managing it requires Apple's
-  FamilyControls/DeviceActivity frameworks, which need a special
-  entitlement Apple only grants to native apps.
+  app can read it live. The one real exception: iOS has a genuine
+  "Export All Health Data" feature, and this app can parse that export
+  file client-side — see Settings → Apple Health. That's real, not
+  simulated.
+- **Screen Time** — double-checked this specifically. Unlike Health, iOS
+  has never shipped any export option for Screen Time data, manual or
+  otherwise. The only API (DeviceActivity/FamilyControls, iOS 15+) is
+  native-only, needs a special Apple entitlement, and by most native
+  developers' own accounts doesn't hand over raw numbers even to apps that
+  have it. There's genuinely no path from a website to this data.
 - **Game Center** — GameKit is a native framework tied to an Xcode
   project and App Store listing.
 - **Real iOS Home Screen widgets** — those need WidgetKit, a native app
